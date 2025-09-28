@@ -1,11 +1,13 @@
 {
-  "name": "template-express-5",
-  "version": "1.0.3",
-  "description": "template express version 5",
+  "name": "agro-bot",
+  "version": "1.0.0",
+  "description": "agro bot",
   "keywords": [
-    "express",
+    "node",
     "typescript",
-    "template"
+    "agro",
+    "bot",
+    "express"
   ],
   "exports": "./src/server.ts",
   "scripts": {
