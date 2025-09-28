@@ -1,0 +1,62 @@
+{
+  "name": "template-express-5",
+  "version": "1.0.3",
+  "description": "template express version 5",
+  "keywords": [
+    "express",
+    "typescript",
+    "template"
+  ],
+  "exports": "./src/server.ts",
+  "scripts": {
+    "build": "node --run validate-typescript && node --run generate-dist",
+    "server:prod": "dotenv -e .env -- node dist/server.js",
+    "server:dev": "nodemon",
+    "lint": "eslint . --ext .js,.mjs,cjs,.ts,.mts",
+    "lint:fix": "eslint . --ext .js,.mjs,cjs,.ts,.mts --fix",
+    "lint:file": "eslint",
+    "generate-dist": "swc ./src -d dist --strip-leading-paths",
+    "validate-typescript": "tsc -p tsconfig.prod.json",
+    "loglevel:change": "runtime-node-refresh"
+  },
+  "type": "module",
+  "engines": {
+    "node": ">=20.0.0",
+    "npm": ">=9.0.0"
+  },
+  "dependencies": {
+    "express": "^5.1.0",
+    "joi": "^18.0.1",
+    "morgan": "^1.10.1",
+    "runtime-node-refresh": "^1.0.7",
+    "winston": "^3.17.0"
+  },
+  "devDependencies": {
+    "@swc/cli": "^0.7.8",
+    "@swc/core": "^1.13.19",
+    "@types/cors": "^2.8.19",
+    "@types/express": "^5.0.3",
+    "@types/morgan": "^1.9.10",
+    "@types/node": "^24.5.2",
+    "@typescript-eslint/eslint-plugin": "^8.44.1",
+    "@typescript-eslint/parser": "^8.44.1",
+    "eslint": "^9.36.0",
+    "eslint-config-prettier": "^10.1.8",
+    "eslint-plugin-node": "^11.1.0",
+    "eslint-plugin-prettier": "^5.5.4",
+    "eslint-plugin-simple-import-sort": "^12.1.1",
+    "eslint-plugin-unicorn": "^61.0.2",
+    "globals": "^16.4.0",
+    "nodemon": "^3.1.10",
+    "prettier": "^3.6.2",
+    "tsx": "^4.20.5",
+    "typescript": "^5.9.2",
+    "unplugin-swc": "^1.5.7"
+  },
+  "optionalDependencies": {
+    "@rollup/rollup-linux-x64-gnu": "^4.52.3",
+    "@swc/core-linux-arm64-musl": "^1.13.20",
+    "@swc/core-linux-x64-gnu": "^1.13.20",
+    "@swc/core-linux-x64-musl": "^1.13.20"
+  }
+}
