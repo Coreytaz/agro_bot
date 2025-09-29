@@ -3,6 +3,10 @@
 *.log
 *.log*
 
+# env files #
+.env
+.env.*
+
 # Node files #
 node_modules/
 npm-debug.log

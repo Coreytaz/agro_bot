@@ -2,6 +2,7 @@ import { Server } from "node:http";
 
 import app from "@app";
 import config from "@config/config";
+import { stopBot } from "@core/bot";
 import errorHandler from "@core/utils/errorHandler";
 import logger from "@core/utils/logger";
 
@@ -11,18 +12,18 @@ const server: Server = app.listen(port, (): void => {
   logger.info(`Приложение слушает PORT: ${port}`);
 });
 
-const exitHandler = (): void => {
+const exitHandler = async (): Promise<void> => {
   server.close(() => {
     logger.info("Server closed");
-     
-    process.exit(1);
   });
+  await stopBot();
+  process.exit(1);
 };
 
 const unexpectedErrorHandler = (error: Error): void => {
   errorHandler.handleError(error);
   if (!errorHandler.isTrustedError(error)) {
-    exitHandler();
+    void exitHandler();
   }
 };
 
