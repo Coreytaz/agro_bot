@@ -1,12 +1,15 @@
 import logger from "@core/utils/logger";
+import { commands } from "@grammyjs/commands";
 import { run, RunnerHandle } from "@grammyjs/runner";
 import { ignoreOld, sequentialize } from "grammy-middlewares";
 
 import { bot } from "./core";
 import {
+  editAndReply,
   getType,
   identify,
   permissionsCheck,
+  router,
   typeCheck,
   userCheck,
 } from "./core/middlewares";
@@ -19,16 +22,15 @@ async function runBot() {
   bot
     .use(sequentialize())
     .use(ignoreOld(5 * 60 * 24))
-    // .use(commands())
+    .use(commands())
 
     .use(getType)
     .use(userCheck)
     .use(typeCheck)
     .use(permissionsCheck)
-    // .use(editAndReply)
-    .use(identify);
-  // .use(steps)
-  // .use(router);
+    .use(editAndReply)
+    .use(identify)
+    .use(router);
 
   await bot.init();
   runner = run(bot);

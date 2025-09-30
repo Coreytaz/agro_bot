@@ -27,6 +27,7 @@
     "npm": ">=9.0.0"
   },
   "dependencies": {
+    "@grammyjs/commands": "^1.2.0",
     "@grammyjs/parse-mode": "^2.2.0",
     "@grammyjs/runner": "^2.0.3",
     "@libsql/client": "^0.15.15",
