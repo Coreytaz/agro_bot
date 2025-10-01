@@ -22,9 +22,10 @@ export const chatAdminsTG = sqliteTable(
 
 export const getAllChatMainAdmins = async (
   args: Partial<typeof chatAdminsTG.$inferSelect>,
+  options: DrizzleOptions = {},
   ...where: (SQLWrapper | undefined)[]
 ) => {
-  return getAll(chatAdminsTG)(args, ...where);
+  return getAll(chatAdminsTG, options)(args, ...where);
 };
 
 export const addMainAdminToChat = async (

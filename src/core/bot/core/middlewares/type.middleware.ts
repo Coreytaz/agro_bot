@@ -1,8 +1,8 @@
+import logger from "@core/utils/logger";
 import { NextFunction } from "grammy";
 
 import { Context } from "../interface/Context";
-import { loggerTG } from "../utils";
-import { createMsg } from "../utils/createMsg";
+import { ErrorBot } from "../utils";
 
 const mapLang = {
   private: "Приватный чат",
@@ -12,14 +12,21 @@ const mapLang = {
 };
 
 export default async function typeCheck(ctx: Context, next: NextFunction) {
-  const config = ctx.chatType;
+  try {
+    const config = ctx.chatType;
 
-  if (!config.enable) {
-    const m = `Бот отключен для типа чата "${mapLang[ctx.chatType.name]}"`;
-    await loggerTG.info(m);
-    const msg = createMsg("info", m);
-    return ctx.reply(msg.text, { entities: msg.entities });
+    if (!config.enable)
+      throw new ErrorBot(
+        `Бот отключен для типа чата "${mapLang[ctx.chatType.name]}"`,
+        ctx,
+        true,
+      );
+
+    await next();
+  } catch (error) {
+    if (error instanceof ErrorBot) {
+      logger.error(error.message);
+    }
+    return;
   }
-
-  await next();
 }

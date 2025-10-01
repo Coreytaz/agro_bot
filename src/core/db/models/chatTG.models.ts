@@ -1,6 +1,7 @@
 import type { SQLWrapper } from "drizzle-orm";
 import { int, sqliteTable, text } from "drizzle-orm/sqlite-core";
 
+import { DrizzleOptions } from "../types";
 import {
   findAndCountAll,
   getAll,
@@ -8,7 +9,6 @@ import {
   timestamps,
   updateOne,
 } from "../utils";
-import { getMainAdminsForChat } from "./chatAdminsTG.models";
 import { role } from "./role.models";
 import { typeTG } from "./typeTG.models";
 
@@ -48,23 +48,10 @@ export const updateOneChatTG = async <T extends typeof chatTG>(
   return updateOne(chatTG)(args, where, ...rest);
 };
 
-export const getAllChatTg = async <T extends typeof chatTG>(
+export const getAllChatTG = async <T extends typeof chatTG>(
   args: Partial<T["$inferSelect"]>,
+  options: DrizzleOptions = {},
   ...rest: (SQLWrapper | undefined)[]
 ) => {
-  return getAll(chatTG)(args, ...rest);
-};
-
-export const getChatWithMainAdmin = async (chatId: string) => {
-  const chatInfo = await getOneChatTG({ chatId });
-  if (!chatInfo) {
-    return null;
-  }
-
-  const mainAdmins = await getMainAdminsForChat(chatInfo.id);
-
-  return {
-    ...chatInfo,
-    mainAdmins,
-  };
+  return getAll(chatTG, options)(args, ...rest);
 };

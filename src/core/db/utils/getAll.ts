@@ -2,13 +2,14 @@ import { and, eq, SQLWrapper } from "drizzle-orm";
 import { SQLiteTable } from "drizzle-orm/sqlite-core";
 
 import { drizzle } from "../drizzle";
-import type { DrizzleTx } from "../types";
+import type { DrizzleOptions } from "../types";
 
 export const getAll = <T extends SQLiteTable>(
   table: T,
-  options: { ctx?: typeof drizzle | DrizzleTx } = {},
+  options: DrizzleOptions = {},
 ) => {
   const { ctx = drizzle } = options;
+
   return async (
     args?: Partial<T["$inferSelect"]>,
     ...rest: (SQLWrapper | undefined)[]
