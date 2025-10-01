@@ -1,3 +1,9 @@
 import type { Command } from "@grammyjs/commands";
 
-export default {} as unknown as Record<string, Command>;
+import menuCommand from "./menu";
+
+const commands = {
+  "/menu": menuCommand,
+} as unknown as Record<string, Command>;
+
+export default commands;

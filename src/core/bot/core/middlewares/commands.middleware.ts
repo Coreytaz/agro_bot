@@ -33,18 +33,27 @@ const splitCommand = (ctx: Context) => {
   if (referralLink.startsWith('"') && referralLink.endsWith('"')) {
     referralLink = referralLink.slice(1, -1);
   }
-  
+
   ctx.usernameBot = usernameBot;
   ctx.referralLink = referralLink;
 
-  return command;
+  return [command, usernameBot];
 };
 
 export default async function commands(ctx: Context, next: NextFunction) {
   try {
     logger.debug(`isCmd = ${ctx.isCmd}`);
 
-    const command = splitCommand(ctx);
+    const [command, usernameBot] = splitCommand(ctx);
+
+    if (usernameBot && usernameBot !== ctx.me.username)
+      throw new ErrorBot("Команда не для этого бота!", ctx, true);
+
+    if (command === "/cancel" && ctx.session?.isActive) {
+      await ctx.sessionClear?.();
+      await ctx.reply("Действие отменено");
+      return;
+    }
 
     const pointRoute = ctx.rules["*"];
 
