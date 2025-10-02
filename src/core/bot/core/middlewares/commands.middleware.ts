@@ -5,7 +5,7 @@ import type { NextFunction } from "grammy";
 
 import cmds from "../../commands";
 import { Context } from "../interface/Context";
-import { ErrorBot } from "../utils";
+import { LoggerBot } from "../utils";
 
 const myCommands = (cmds: Record<string, Command>) => {
   return Object.values(cmds).map(command => ({
@@ -20,7 +20,11 @@ const returnCommandHelper = async (
   next: NextFunction,
 ) => {
   const commandFunc = cmds[command] ?? null;
-  if (!commandFunc) throw new ErrorBot("Данной команды нету!", ctx, true);
+  if (!commandFunc)
+    throw new LoggerBot("Данной команды нету!", {
+      ctx,
+      datapath: "bot.commands",
+    });
   await ctx.api.setMyCommands(myCommands(cmds));
   await commandFunc.middleware()(ctx, next);
 };
@@ -47,7 +51,10 @@ export default async function commands(ctx: Context, next: NextFunction) {
     const [command, usernameBot] = splitCommand(ctx);
 
     if (usernameBot && usernameBot !== ctx.me.username)
-      throw new ErrorBot("Команда не для этого бота!", ctx, true);
+      throw new LoggerBot("Команда не для этого бота!", {
+        ctx,
+        datapath: "bot.commands",
+      });
 
     if (command === "/cancel" && ctx.session?.isActive) {
       await ctx.sessionClear?.();
@@ -67,11 +74,17 @@ export default async function commands(ctx: Context, next: NextFunction) {
     const rule = ctx.rules[command];
 
     if (!rule) {
-      throw new ErrorBot("Нет прав доступа!", ctx, true);
+      throw new LoggerBot("Нет прав доступа!", {
+        ctx,
+        datapath: "permissions.accessDenied",
+      });
     }
 
     if (!rule.enable) {
-      throw new ErrorBot("Нет прав доступа!", ctx, true);
+      throw new LoggerBot("Нет прав доступа!", {
+        ctx,
+        datapath: "permissions.accessDenied",
+      });
     }
 
     await returnCommandHelper(command, ctx, next);

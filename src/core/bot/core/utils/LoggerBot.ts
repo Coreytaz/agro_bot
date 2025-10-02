@@ -1,23 +1,30 @@
+import { KeyLogger } from "@core/db/config";
 import logger from "@core/utils/logger";
 
-import { Context } from "../interface/Context";
+import type { Context } from "../interface/Context";
+import type { TypeLogger } from "../interface/Logger";
 import { loggerTG } from "./logger";
 import { parseObjectToHTML } from "./parseObjectToHTML";
 import { separator } from "./separator";
 
-export class ErrorBot extends Error {
-  public readonly ctx: Context;
-  public readonly systemError: boolean;
+interface LoggerBotOptions {
+  ctx?: Context;
+  type?: TypeLogger;
+  datapath?: KeyLogger;
+}
 
-  constructor(description: string, ctx: Context, systemError = false) {
+export class LoggerBot extends Error {
+  constructor(description: string, options: LoggerBotOptions = {}) {
     super(description);
-    this.ctx = ctx;
-    this.systemError = systemError;
+    const { ctx, type = "error", datapath } = options;
 
-    if (systemError) {
+    if (ctx) {
       try {
         const error = parseObjectToHTML({
-          users: { title: "Пользователь", value: `@${ctx.from?.username}` },
+          users: {
+            title: "Пользователь",
+            value: `@${ctx.from?.username}`,
+          },
           chatId: {
             title: "ЧатID",
             value: String(ctx.chatId),
@@ -34,6 +41,13 @@ export class ErrorBot extends Error {
             value: description,
             separator: () => `\n${separator}\n`,
           },
+          datapath: datapath
+            ? {
+                title: "Название лога",
+                value: datapath,
+                separator: () => `\n${separator}\n`,
+              }
+            : undefined,
           msg: ctx.message?.text
             ? {
                 title: "Сообщение",
@@ -49,10 +63,8 @@ export class ErrorBot extends Error {
                 separator: () => `\n${separator}\n`,
               }
             : undefined,
-          // stepActive: { title: "Шаг активный", value: ctx.step.context().enable ?? false },
-          // step: ctx.step?.context()?.step && { title: "Шаг", value: ctx.step.context().step, options: { pre: true } },
         });
-        void loggerTG.error(error);
+        void loggerTG.message(type, error, datapath);
       } catch (error) {
         logger.error(error);
       }

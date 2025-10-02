@@ -12,12 +12,15 @@ import { eq } from "drizzle-orm";
 import { NextFunction } from "grammy";
 
 import { Context } from "../interface/Context";
-import { ErrorBot } from "../utils";
+import { LoggerBot } from "../utils";
 
 export default async function userCheck(ctx: Context, next: NextFunction) {
   try {
     if (!ctx.chatId)
-      throw new ErrorBot("Не удалось определить чат!", ctx, true);
+      throw new LoggerBot("Не удалось определить чат!", {
+        ctx,
+        datapath: "bot.middleware.userCheck",
+      });
 
     const chat = await drizzle.transaction(async tx => {
       const existingChat = await tx
@@ -34,7 +37,10 @@ export default async function userCheck(ctx: Context, next: NextFunction) {
         );
 
         if (!guestRole)
-          throw new ErrorBot("Роль гостя не найдена в базе!", ctx, true);
+          throw new LoggerBot("Роль гостя не найдена в базе!", {
+            ctx,
+            datapath: "bot.middleware.emptyRole",
+          });
 
         const name =
           ctx.chat?.title ??
@@ -84,7 +90,7 @@ export default async function userCheck(ctx: Context, next: NextFunction) {
     await next();
     return;
   } catch (error) {
-    if (error instanceof ErrorBot) {
+    if (error instanceof LoggerBot) {
       logger.error(error.message);
     }
   }

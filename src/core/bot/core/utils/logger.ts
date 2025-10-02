@@ -1,7 +1,9 @@
 import config from "@config/config";
+import { KeyLogger } from "@core/db/config";
 import { drizzle } from "@core/db/drizzle";
 import {
   chatAdminsTG,
+  filterChatIdsByDatapath,
   getAllChatMainAdmins,
   getAllChatTG,
   getOneRole,
@@ -19,9 +21,10 @@ import { createMsg } from "./createMsg";
 type Other = Parameters<Context["api"]["sendMessage"]>[2];
 
 class LoggerTG {
-  private async message(
+  public async message(
     type: TypeLogger,
     message: string | FormattedString,
+    datapath?: KeyLogger,
     _other?: Other,
   ) {
     try {
@@ -35,13 +38,12 @@ class LoggerTG {
           logger.warn(
             "Role 'admin' not found. Skipping Telegram logging to admins.",
           );
-          return [] as string[];
+          return [];
         }
 
-        // 2) Все чаты с ролью admin
         const chats = await getAllChatTG({ roleId: adminRole.id }, { ctx: tx });
 
-        if (chats.length === 0) return [] as string[];
+        if (!(chats.length > 0)) return [];
 
         const chatIds = chats.map(c => c.id);
 
@@ -51,11 +53,20 @@ class LoggerTG {
           inArray(chatAdminsTG.chatId, chatIds),
         );
 
-        const uniq = Array.from(new Set(admins.map(a => a.adminChatId)));
-        return uniq;
+        if (!(admins.length > 0)) return [];
+
+        let adminsIds = Array.from(new Set(admins.map(a => a.adminChatId)));
+
+        if (datapath) {
+          adminsIds = await filterChatIdsByDatapath(adminsIds, datapath, {
+            ctx: tx,
+          });
+        }
+
+        return adminsIds;
       });
 
-      if (adminChatIds.length === 0) return;
+      if (!(adminChatIds.length > 0)) return;
 
       const fmtMessage = createMsg(type, message);
 
@@ -72,16 +83,16 @@ class LoggerTG {
 
   public async debug(message: string | FormattedString, other?: Other) {
     if (config.isDev) {
-      await this.message("debug", message, other);
+      await this.message("debug", message, undefined, other);
     }
   }
 
   public async info(message: string | FormattedString, other?: Other) {
-    await this.message("info", message, other);
+    await this.message("info", message, undefined, other);
   }
 
   public async error(message: string | FormattedString, other?: Other) {
-    await this.message("error", message, other);
+    await this.message("error", message, undefined, other);
   }
 }
 

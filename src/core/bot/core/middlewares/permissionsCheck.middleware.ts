@@ -6,7 +6,7 @@ import { and, desc, eq, isNull, or } from "drizzle-orm";
 import { NextFunction } from "grammy";
 
 import { Context } from "../interface/Context";
-import { ErrorBot } from "../utils";
+import { LoggerBot } from "../utils";
 
 const reduceRules = (_rules: (typeof rules.$inferSelect)[]) => {
   return _rules.reduce<Record<string, typeof rules.$inferSelect>>(
@@ -83,20 +83,26 @@ export default async function permissionsCheck(
     });
 
     if (!permission) {
-      throw new ErrorBot("Нет прав доступа!", ctx, true);
+      throw new LoggerBot("Нет прав доступа!", {
+        ctx,
+        datapath: "permissions.accessDenied",
+      });
     }
 
     ctx.configUser = permission.permission;
     ctx.rules = reduceRules(permission.rules);
 
     if (!permission.permission.enable) {
-      throw new ErrorBot("Нет прав доступа!", ctx, true);
+      throw new LoggerBot("Нет прав доступа!", {
+        ctx,
+        datapath: "permissions.accessDenied",
+      });
     }
 
     await next();
     return;
   } catch (error) {
-    if (error instanceof ErrorBot) {
+    if (error instanceof LoggerBot) {
       logger.error(error.message);
     }
   }

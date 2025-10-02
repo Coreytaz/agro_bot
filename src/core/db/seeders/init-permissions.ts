@@ -138,44 +138,40 @@ const generatePermissions = (
   let count = 1;
   Object.entries(config).forEach(([chatType, value]) => {
     const current = value as { enable: boolean; role: Record<string, any> };
-    if (current.enable) {
-      Object.entries(current.role).forEach(([role, roleValue]) => {
-        if (roleValue.enable) {
-          const key = genKey(chatType, role);
-          permissions[key] ??= {
-            id: count,
-            chatType: type[chatType],
-            roleId: roles[role],
-            chatId: null,
-            enable: 1,
-          };
-          if (roleValue.commands === "*") {
-            const ruleId = rules[roleValue.commands];
-            if (ruleId) {
-              permission_rules.push({
-                permissionId: count,
-                ruleId,
-              });
-            }
-          } else {
-            Object.entries(roleValue.commands).forEach(
-              ([command, commandValue]) => {
-                if ((commandValue as { enable: boolean }).enable) {
-                  const ruleId = rules[command];
-                  if (ruleId) {
-                    permission_rules.push({
-                      permissionId: count,
-                      ruleId,
-                    });
-                  }
-                }
-              },
-            );
-          }
-          count += 1;
+    Object.entries(current.role).forEach(([role, roleValue]) => {
+      const key = genKey(chatType, role);
+      permissions[key] ??= {
+        id: count,
+        chatType: type[chatType],
+        roleId: roles[role],
+        chatId: null,
+        enable: current.enable && roleValue.enable ? 1 : 0,
+      };
+      if (roleValue.commands === "*") {
+        const ruleId = rules[roleValue.commands];
+        if (ruleId) {
+          permission_rules.push({
+            permissionId: count,
+            ruleId,
+          });
         }
-      });
-    }
+      } else {
+        Object.entries(roleValue.commands).forEach(
+          ([command, commandValue]) => {
+            if ((commandValue as { enable: boolean }).enable) {
+              const ruleId = rules[command];
+              if (ruleId) {
+                permission_rules.push({
+                  permissionId: count,
+                  ruleId,
+                });
+              }
+            }
+          },
+        );
+      }
+      count += 1;
+    });
   });
 
   return { permissions: Object.values(permissions), permission_rules };
@@ -227,8 +223,6 @@ export default async function seedDefaultConfig() {
 
     const { permissions: permissionsData, permission_rules } =
       generatePermissions(initPermissionConfig, roles, rules, type);
-
-    console.log(roles, permissionsData, permission_rules);
 
     await drizzle.insert(permissions).values(permissionsData).run();
 

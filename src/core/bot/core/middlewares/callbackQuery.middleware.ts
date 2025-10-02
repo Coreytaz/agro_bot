@@ -5,7 +5,7 @@ import { NextFunction } from "grammy";
 
 import cbQuery from "../../callbackQuery";
 import { Context } from "../interface/Context";
-import { ErrorBot, ParamsExtractorDB } from "../utils";
+import { LoggerBot, ParamsExtractorDB } from "../utils";
 
 const returnCallbackQueryHelper = async (
   route: string,
@@ -13,7 +13,11 @@ const returnCallbackQueryHelper = async (
   next: NextFunction,
 ) => {
   const cbQueryFunc = cbQuery[route] ?? null;
-  if (!cbQueryFunc) throw new ErrorBot("Данной команды нету!", ctx, true);
+  if (!cbQueryFunc)
+    throw new LoggerBot("Данной команды нету!", {
+      ctx,
+      datapath: "bot.callbacks",
+    });
   await cbQueryFunc(ctx, next);
 };
 
@@ -25,7 +29,7 @@ export default async function callbackQuery(ctx: Context, next: NextFunction) {
 
     // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
     const params = new ParamsExtractorDB(data!);
-    
+
     ctx.paramsExtractor = params;
 
     if (!isEmpty(params.params[params.key_db])) {
@@ -46,11 +50,17 @@ export default async function callbackQuery(ctx: Context, next: NextFunction) {
     const rule = ctx.rules[route];
 
     if (!rule) {
-      throw new ErrorBot("Нет прав доступа!", ctx, true);
+      throw new LoggerBot("Нет прав доступа!", {
+        ctx,
+        datapath: "permissions.accessDenied",
+      });
     }
 
     if (!rule.enable) {
-      throw new ErrorBot("Нет прав доступа!", ctx, true);
+      throw new LoggerBot("Нет прав доступа!", {
+        ctx,
+        datapath: "permissions.accessDenied",
+      });
     }
 
     await returnCallbackQueryHelper(route, ctx, next);
