@@ -14,8 +14,6 @@ const mapLang = {
 
 export default async function getType(ctx: Context, next: NextFunction) {
   try {
-    console.log(ctx.from.language_code);
-
     const chatType = ctx.chat?.type;
 
     if (!chatType)

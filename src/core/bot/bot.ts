@@ -9,6 +9,7 @@ import {
   editAndReply,
   getType,
   identify,
+  localization,
   permissionsCheck,
   router,
   session,
@@ -28,6 +29,7 @@ async function runBot() {
 
     .use(getType)
     .use(userCheck)
+    .use(localization)
     .use(typeCheck)
     .use(permissionsCheck)
     .use(editAndReply)

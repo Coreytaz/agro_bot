@@ -1,6 +1,7 @@
 export * from "./chatAdminsTG.models";
 export * from "./chatReplyTG.models";
 export * from "./chatTG.models";
+export * from "./localization.models";
 export * from "./loggerSettingsTG.models";
 export * from "./paramsTG.models";
 export * from "./permissionRule.models";

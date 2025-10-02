@@ -14,7 +14,9 @@ export const menuCommand = new Command<Context>(
   "menu",
   "Главное меню",
   async ctx => {
-    await ctx.editAndReply.reply("Главное меню", { reply_markup: keyboard });
+    const title = await ctx.t("menu.title");
+
+    await ctx.editAndReply.reply(title, { reply_markup: keyboard });
   },
 );
 

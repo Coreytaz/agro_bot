@@ -11,10 +11,12 @@ import type { Context as BaseContext } from "grammy";
 
 import type { ParamsExtractorDB } from "../utils";
 import type { ContextWithEditAndReply } from "./ContextWithEditAndReply";
+import { Localization } from "./LocalizationContext";
 
 export type Context = BaseContext &
   CommandsFlavor &
-  ContextWithEditAndReply & {
+  ContextWithEditAndReply &
+  Localization & {
     chatDB: typeof chatTG.$inferSelect;
     role: typeof role.$inferSelect;
     configUser: typeof permissions.$inferSelect;
@@ -32,9 +34,11 @@ export type Context = BaseContext &
     isKeyboard?: boolean;
 
     // Session (awaiting input) support
-    session?: (Omit<typeof sessionTG.$inferSelect, "data"> & {
-      data: Record<string, unknown> | null;
-    }) | null;
+    session?:
+      | (Omit<typeof sessionTG.$inferSelect, "data"> & {
+          data: Record<string, unknown> | null;
+        })
+      | null;
     sessionSet?: (args: {
       route: string;
       data?: Record<string, unknown>;

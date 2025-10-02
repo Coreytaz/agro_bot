@@ -4,8 +4,6 @@ import { initialDataRoles } from "../config";
 import { drizzle } from "../drizzle";
 import { role } from "../models";
 
-
-
 export default async function seedDefaultConfig() {
   try {
     const existingConfigs = await drizzle.select().from(role).all();

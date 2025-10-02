@@ -37,6 +37,7 @@ export async function runInitialSeeders() {
       "init-admins-chatTg",
       "init-rules",
       "init-permissions",
+      "init-localization",
     ];
 
     logger.info("Starting seeders execution...");
