@@ -1,7 +1,7 @@
-import { getLocalizationByKey, LocalizationKey } from "@core/db/models";
+import { localizationConfig } from "@config/localization.config";
+import { LocalizationKey } from "@core/db/interface";
+import { getLocalizationByKey } from "@core/db/models";
 import logger from "@core/utils/logger";
-
-import { localizationConfig } from "../config";
 
 export interface LocalizationService {
   translate(key: string, locale?: string): Promise<string>;

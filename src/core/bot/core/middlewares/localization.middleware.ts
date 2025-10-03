@@ -1,5 +1,6 @@
-import { localizationConfig } from "@core/bot/core/config";
-import { LocalizationKey } from "@core/db/models";
+import { localizationConfig } from "@config/localization.config";
+import { LocalizationKey, SupportedLocale } from "@core/db/interface";
+import { getChatSettingsByChatTgId } from "@core/db/models";
 import logger from "@core/utils/logger";
 import type { NextFunction } from "grammy";
 
@@ -7,15 +8,29 @@ import type { Context } from "../interface/Context";
 import { Localization } from "../interface/LocalizationContext";
 import { localizationService } from "../utils";
 
-const getUserLocale = (ctx: Context): string => {
-  const userLocale =
-    ctx.from?.language_code ?? localizationConfig.defaultLocale;
+const getUserLocale = async (ctx: Context) => {
+  const defaultLocale = localizationConfig.defaultLocale as string;
 
-  const normalizedLocale = userLocale.split("-")[0];
+  try {
+    // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
+    if (ctx.chatDB) {
+      const chatSettings = await getChatSettingsByChatTgId(ctx.chatDB.id);
+      if (chatSettings?.locale)
+        if (localizationConfig.supportedLocales.includes(chatSettings.locale))
+          return chatSettings.locale;
+    }
 
-  return localizationConfig.supportedLocales.includes(normalizedLocale)
-    ? normalizedLocale
-    : localizationConfig.defaultLocale;
+    const userLocale = ctx.from?.language_code ?? defaultLocale;
+
+    const normalizedLocale = userLocale.split("-")[0] as SupportedLocale;
+
+    return localizationConfig.supportedLocales.includes(normalizedLocale)
+      ? normalizedLocale
+      : defaultLocale;
+  } catch (error) {
+    logger.warn("Failed to getUserLocale:", error);
+    return defaultLocale;
+  }
 };
 
 const createLocalizationMethods = (locale: string): Localization => {
@@ -39,15 +54,16 @@ const createFallbackMethods = (locale: string): Localization => {
   };
 };
 
-const localizationContext = (ctx: Context) => {
-  const locale = getUserLocale(ctx);
+const localizationContext = async (ctx: Context) => {
   try {
+    const locale = await getUserLocale(ctx);
     ctx.locale = locale;
     return createLocalizationMethods(locale);
   } catch (error) {
     logger.error("Localization context error:", error);
-    ctx.locale = localizationConfig.defaultLocale;
-    return createFallbackMethods(locale);
+    const defaultLocale = localizationConfig.defaultLocale;
+    ctx.locale = defaultLocale;
+    return createFallbackMethods(defaultLocale);
   }
 };
 
@@ -55,7 +71,7 @@ export default async function localizationMiddleware(
   ctx: Context,
   next: NextFunction,
 ) {
-  const methods = localizationContext(ctx);
+  const methods = await localizationContext(ctx);
   ctx.t = methods.t;
   await next();
 }

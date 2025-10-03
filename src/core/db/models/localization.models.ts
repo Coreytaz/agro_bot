@@ -1,6 +1,7 @@
 import type { SQLWrapper } from "drizzle-orm";
 import { int, sqliteTable, text } from "drizzle-orm/sqlite-core";
 
+import { LocalizationKey } from "../interface/Localization";
 import { DrizzleOptions } from "../types";
 import {
   createOne,
@@ -10,13 +11,6 @@ import {
   timestamps,
   updateOne,
 } from "../utils";
-
-export const LOCALIZATION_KEYS = {
-  MENU_TITLE: "menu.title",
-} as const;
-
-export type LocalizationKey =
-  (typeof LOCALIZATION_KEYS)[keyof typeof LOCALIZATION_KEYS];
 
 export const localization = sqliteTable("localization", {
   id: int().primaryKey({ autoIncrement: true }),

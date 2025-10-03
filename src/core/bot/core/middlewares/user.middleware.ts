@@ -1,7 +1,9 @@
+import { localizationConfig } from "@config/localization.config";
 import { drizzle } from "@core/db";
 import {
   addMainAdminToChat,
   chatTG,
+  createDefaultChatSettings,
   getOneRole,
   role as _role,
   RoleType,
@@ -60,6 +62,15 @@ export default async function userCheck(ctx: Context, next: NextFunction) {
           .values(chatTg)
           .returning()
           .get();
+
+        const userLocale =
+          ctx.from?.language_code ?? localizationConfig.defaultLocale;
+        const normalizedLocale = userLocale.split("-").at(0) ?? "";
+        const chatLocale = ["ru", "en"].includes(normalizedLocale)
+          ? normalizedLocale
+          : localizationConfig.defaultLocale;
+
+        await createDefaultChatSettings(newChat.id, chatLocale, { ctx: tx });
 
         if (ctx.chatType.name === "private") {
           await addMainAdminToChat(
