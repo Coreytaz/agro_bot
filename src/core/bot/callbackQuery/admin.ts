@@ -1,85 +1,89 @@
 import type { Context } from "../core/interface/Context";
 import { createAdminMenuKeyboard } from "../utils";
 
-export const adminCallbackHandler = async (ctx: Context) => {
-  const callbackData = ctx.callbackQuery?.data;
-
+async function adminContent(ctx: Context) {
   await ctx.answerCallbackQuery();
+  await ctx.editMessageText(
+    "📝 Управление контентом\n\nЗдесь будет функционал управления контентом",
+    {
+      reply_markup: {
+        inline_keyboard: [
+          [{ text: "⬅️ Назад", callback_data: "admin_back" }],
+        ],
+      },
+    },
+  );
+}
 
-  switch (callbackData) {
-    case "admin_content":
-      await ctx.editMessageText(
-        "📝 Управление контентом\n\nЗдесь будет функционал управления контентом",
-        {
-          reply_markup: {
-            inline_keyboard: [
-              [{ text: "⬅️ Назад", callback_data: "admin_back" }],
-            ],
-          },
-        },
-      );
-      break;
+async function adminBroadcast(ctx: Context) {
+  await ctx.answerCallbackQuery();
+  await ctx.editMessageText(
+    "📢 Рассылка\n\nЗдесь будет функционал рассылки сообщений",
+    {
+      reply_markup: {
+        inline_keyboard: [
+          [{ text: "⬅️ Назад", callback_data: "admin_back" }],
+        ],
+      },
+    },
+  );
+}
 
-    case "admin_broadcast":
-      await ctx.editMessageText(
-        "📢 Рассылка\n\nЗдесь будет функционал рассылки сообщений",
-        {
-          reply_markup: {
-            inline_keyboard: [
-              [{ text: "⬅️ Назад", callback_data: "admin_back" }],
-            ],
-          },
-        },
-      );
-      break;
+async function adminModelSettings(ctx: Context) {
+  await ctx.answerCallbackQuery();
+  await ctx.editMessageText(
+    "🤖 Настройки модели\n\nЗдесь будут настройки ИИ модели",
+    {
+      reply_markup: {
+        inline_keyboard: [
+          [{ text: "⬅️ Назад", callback_data: "admin_back" }],
+        ],
+      },
+    },
+  );
+}
 
-    case "admin_model_settings":
-      await ctx.editMessageText(
-        "🤖 Настройки модели\n\nЗдесь будут настройки ИИ модели",
-        {
-          reply_markup: {
-            inline_keyboard: [
-              [{ text: "⬅️ Назад", callback_data: "admin_back" }],
-            ],
-          },
-        },
-      );
-      break;
+async function adminStatistics(ctx: Context) {
+  await ctx.answerCallbackQuery();
+  await ctx.editMessageText(
+    "📊 Статистика\n\nЗдесь будет статистика бота",
+    {
+      reply_markup: {
+        inline_keyboard: [
+          [{ text: "⬅️ Назад", callback_data: "admin_back" }],
+        ],
+      },
+    },
+  );
+}
 
-    case "admin_statistics":
-      await ctx.editMessageText(
-        "📊 Статистика\n\nЗдесь будет статистика бота",
-        {
-          reply_markup: {
-            inline_keyboard: [
-              [{ text: "⬅️ Назад", callback_data: "admin_back" }],
-            ],
-          },
-        },
-      );
-      break;
+async function adminUsers(ctx: Context) {
+  await ctx.answerCallbackQuery();
+  await ctx.editMessageText(
+    "👥 Пользователи\n\nЗдесь будет управление пользователями",
+    {
+      reply_markup: {
+        inline_keyboard: [
+          [{ text: "⬅️ Назад", callback_data: "admin_back" }],
+        ],
+      },
+    },
+  );
+}
 
-    case "admin_users":
-      await ctx.editMessageText(
-        "👥 Пользователи\n\nЗдесь будет управление пользователями",
-        {
-          reply_markup: {
-            inline_keyboard: [
-              [{ text: "⬅️ Назад", callback_data: "admin_back" }],
-            ],
-          },
-        },
-      );
-      break;
+async function adminBack(ctx: Context) {
+  await ctx.answerCallbackQuery();
+  const [title, keyboard] = await createAdminMenuKeyboard(ctx);
+  await ctx.editMessageText(title, {
+    reply_markup: keyboard,
+  });
+}
 
-    case "admin_back":
-      const [title, keyboard] = await createAdminMenuKeyboard(ctx);
-      await ctx.editMessageText(title, {
-        reply_markup: keyboard,
-      });
-      break;
-
-    default:
-      break;
-  }
+export default {
+  "admin_content": adminContent,
+  "admin_broadcast": adminBroadcast,
+  "admin_model_settings": adminModelSettings,
+  "admin_statistics": adminStatistics,
+  "admin_users": adminUsers,
+  "admin_back": adminBack,
 };

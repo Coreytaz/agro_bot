@@ -14,18 +14,29 @@ import settings from "./settings";
 
 async function settingsLanguage(ctx: Context) {
   try {
-    const selectText = await ctx.t(LOCALIZATION_KEYS.SETTINGS_LANGUAGE_SELECT);
-    const ruText = await ctx.t(LOCALIZATION_KEYS.LANGUAGE_RU);
-    const enText = await ctx.t(LOCALIZATION_KEYS.LANGUAGE_EN);
-    const backText = await ctx.t(LOCALIZATION_KEYS.BUTTON_BACK);
+    const translate = await ctx.tm([
+      LOCALIZATION_KEYS.SETTINGS_LANGUAGE_SELECT,
+      LOCALIZATION_KEYS.LANGUAGE_RU,
+      LOCALIZATION_KEYS.LANGUAGE_EN,
+      LOCALIZATION_KEYS.BUTTON_BACK,
+    ]);
 
     const keyboard = new InlineKeyboard()
-      .text(ruText, "settings.language.set{locale:ru}")
-      .text(enText, "settings.language.set{locale:en}")
+      .text(
+        translate[LOCALIZATION_KEYS.LANGUAGE_RU],
+        "settings.language.set{locale:ru}",
+      )
+      .text(
+        translate[LOCALIZATION_KEYS.LANGUAGE_EN],
+        "settings.language.set{locale:en}",
+      )
       .row()
-      .text(backText, "settings.back");
+      .text(translate[LOCALIZATION_KEYS.BUTTON_BACK], "settings.back");
 
-    await ctx.editAndReply.reply(selectText, { reply_markup: keyboard });
+    await ctx.editAndReply.reply(
+      translate[LOCALIZATION_KEYS.SETTINGS_LANGUAGE_SELECT],
+      { reply_markup: keyboard },
+    );
   } catch (error) {
     logger.error("Error in settings language callback:", error);
     await ctx.editAndReply.reply("❌ Произошла ошибка");
@@ -65,15 +76,23 @@ export async function settingsLanguageSet(ctx: Context) {
       );
     });
 
-    const confirmText = await ctx.t(
-      LOCALIZATION_KEYS.SETTINGS_LANGUAGE_CHANGED,
+    const translate = await ctx.tm(
+      [
+        LOCALIZATION_KEYS.SETTINGS_LANGUAGE_CHANGED,
+        LOCALIZATION_KEYS.BUTTON_BACK,
+      ],
       locale,
     );
-    const backText = await ctx.t(LOCALIZATION_KEYS.BUTTON_BACK, locale);
 
-    const keyboard = new InlineKeyboard().text(backText, "settings.language");
+    const keyboard = new InlineKeyboard().text(
+      translate[LOCALIZATION_KEYS.BUTTON_BACK],
+      "settings.language",
+    );
 
-    await ctx.editAndReply.reply(confirmText, { reply_markup: keyboard });
+    await ctx.editAndReply.reply(
+      translate[LOCALIZATION_KEYS.SETTINGS_LANGUAGE_CHANGED],
+      { reply_markup: keyboard },
+    );
   } catch (error) {
     logger.error("Error in settings language set callback:", error);
     await ctx.editAndReply.reply("❌ Произошла ошибка");
@@ -82,15 +101,19 @@ export async function settingsLanguageSet(ctx: Context) {
 
 export async function settingsBack(ctx: Context) {
   try {
-    const title = await ctx.t(LOCALIZATION_KEYS.SETTINGS_TITLE);
-    const languageButton = await ctx.t(LOCALIZATION_KEYS.SETTINGS_LANGUAGE);
+    const translate = await ctx.tm([
+      LOCALIZATION_KEYS.SETTINGS_TITLE,
+      LOCALIZATION_KEYS.SETTINGS_LANGUAGE,
+    ]);
 
     const keyboard = new InlineKeyboard().text(
-      languageButton,
+      translate[LOCALIZATION_KEYS.SETTINGS_LANGUAGE],
       "settings.language",
     );
 
-    await ctx.editAndReply.reply(title, { reply_markup: keyboard });
+    await ctx.editAndReply.reply(translate[LOCALIZATION_KEYS.SETTINGS_TITLE], {
+      reply_markup: keyboard,
+    });
   } catch (error) {
     logger.error("Error in settings back callback:", error);
     await ctx.editAndReply.reply("❌ Произошла ошибка");
