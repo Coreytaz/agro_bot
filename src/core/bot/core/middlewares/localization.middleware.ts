@@ -43,6 +43,18 @@ const createLocalizationMethods = (locale: string): Localization => {
         return `[${key}]`;
       }
     },
+    tm: async (keys: LocalizationKey[], targetLocale?: string) => {
+      try {
+        return await localizationService.translateMultiple(keys, targetLocale ?? locale);
+      } catch (error) {
+        logger.error(`Multiple translation error for keys "${keys.join(', ')}":`, error);
+        const fallback: Record<string, string> = {};
+        keys.forEach(key => {
+          fallback[key] = `[${key}]`;
+        });
+        return fallback;
+      }
+    },
     locale,
   };
 };
@@ -50,6 +62,13 @@ const createLocalizationMethods = (locale: string): Localization => {
 const createFallbackMethods = (locale: string): Localization => {
   return {
     t: (key: string) => Promise.resolve(key),
+    tm: (keys: string[]) => {
+      const fallback: Record<string, string> = {};
+      keys.forEach(key => {
+        fallback[key] = key;
+      });
+      return Promise.resolve(fallback);
+    },
     locale,
   };
 };
@@ -73,5 +92,6 @@ export default async function localizationMiddleware(
 ) {
   const methods = await localizationContext(ctx);
   ctx.t = methods.t;
+  ctx.tm = methods.tm;
   await next();
 }

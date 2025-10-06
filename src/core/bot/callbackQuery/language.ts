@@ -1,6 +1,11 @@
 import { LOCALIZATION_KEYS } from "@config/localization.config";
+import { drizzle } from "@core/db";
 import { SupportedLocale } from "@core/db/interface";
-import { updateChatLocale } from "@core/db/models";
+import {
+  createOneChatSettings,
+  getOneChatSettings,
+  updateOneChatSettings,
+} from "@core/db/models";
 import logger from "@core/utils/logger";
 import { InlineKeyboard } from "grammy";
 
@@ -41,7 +46,23 @@ export async function settingsLanguageSet(ctx: Context) {
       return;
     }
 
-    await updateChatLocale(ctx.chatDB.id, locale);
+    await drizzle.transaction(async tx => {
+      let chatSettings = await getOneChatSettings(
+        { chatTgId: ctx.chatDB.id },
+        { ctx: tx },
+      );
+
+      chatSettings ??= await createOneChatSettings(
+        { chatTgId: ctx.chatDB.id },
+        { ctx: tx },
+      );
+
+      await updateOneChatSettings(
+        { locale },
+        { id: chatSettings.id },
+        { ctx: tx },
+      );
+    });
 
     const confirmText = await ctx.t(
       LOCALIZATION_KEYS.SETTINGS_LANGUAGE_CHANGED,

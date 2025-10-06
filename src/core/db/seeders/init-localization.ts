@@ -414,6 +414,80 @@ const initialLocalizationData: LocalizationData[] = [
     value: "❌ An error occurred while performing the operation",
     description: "Operation error message",
   },
+
+  // Админ панель
+  {
+    key: "admin.menu.title",
+    locale: "ru",
+    value: "🛠️ Админ панель",
+    description: "Заголовок админ панели",
+  },
+  {
+    key: "admin.menu.title",
+    locale: "en",
+    value: "🛠️ Admin Panel",
+    description: "Admin panel title",
+  },
+  {
+    key: "admin.menu.content",
+    locale: "ru",
+    value: "📝 Управление контентом",
+    description: "Приветствие в админ панели",
+  },
+  {
+    key: "admin.menu.content",
+    locale: "en",
+    value: "📝 Content Management",
+    description: "Admin panel greeting",
+  },
+  {
+    key: "admin.menu.broadcast",
+    locale: "ru",
+    value: "📢 Рассылка",
+    description: "Опция рассылки в админ панели",
+  },
+  {
+    key: "admin.menu.broadcast",
+    locale: "en",
+    value: "📢 Broadcast",
+    description: "Broadcast option in admin panel",
+  },
+  {
+    key: "admin.menu.model.settings",
+    locale: "ru",
+    value: "🤖 Настройки модели",
+    description: "Опция настроек модели в админ панели",
+  },
+  {
+    key: "admin.menu.model.settings",
+    locale: "en",
+    value: "🤖 Model Settings",
+    description: "Model settings option in admin panel",
+  },
+  {
+    key: "admin.menu.statistics",
+    locale: "ru",
+    value: "📊 Статистика",
+    description: "Опция статистики в админ панели",
+  },
+  {
+    key: "admin.menu.statistics",
+    locale: "en",
+    value: "📊 Statistics",
+    description: "Statistics option in admin panel",
+  },
+  {
+    key: "admin.menu.users",
+    locale: "ru",
+    value: "👥 Пользователи",
+    description: "Опция управления пользователями в админ панели",
+  },
+  {
+    key: "admin.menu.users",
+    locale: "en",
+    value: "👥 Users",
+    description: "User management option in admin panel",
+  },
 ];
 
 export default async function seedLocalization() {

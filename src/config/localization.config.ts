@@ -14,6 +14,15 @@ export const LOCALIZATION_KEYS = {
   LANGUAGE_RU: "language.ru",
   LANGUAGE_EN: "language.en",
   BUTTON_BACK: "button.back",
+  
+  // Админ панель
+  ADMIN_MENU_TITLE: "admin.menu.title",
+  ADMIN_MENU_CONTENT: "admin.menu.content",
+  ADMIN_MENU_BROADCAST: "admin.menu.broadcast",
+  ADMIN_MENU_MODEL_SETTINGS: "admin.menu.model.settings",
+  ADMIN_MENU_STATISTICS: "admin.menu.statistics",
+  ADMIN_MENU_USERS: "admin.menu.users",
+
   // Блокировки и баны
   CHAT_BLOCKED: "blocking.chat.blocked",
   CHAT_UNBLOCKED: "blocking.chat.unblocked",

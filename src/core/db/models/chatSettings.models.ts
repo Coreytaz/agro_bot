@@ -49,17 +49,19 @@ export const findAndCountAllChatSettings = async <
 
 export const getOneChatSettings = async <T extends typeof chatSettings>(
   args: Partial<T["$inferSelect"]>,
+  options: DrizzleOptions = {},
   ...where: (SQLWrapper | undefined)[]
 ) => {
-  return getOne(chatSettings)(args, ...where);
+  return getOne(chatSettings, options)(args, ...where);
 };
 
 export const updateOneChatSettings = async <T extends typeof chatSettings>(
   args: Partial<T["$inferSelect"]>,
   where?: Partial<T["$inferSelect"]>,
+  options: DrizzleOptions = {},
   ...rest: (SQLWrapper | undefined)[]
 ) => {
-  return updateOne(chatSettings)(args, where, ...rest);
+  return updateOne(chatSettings, options)(args, where, ...rest);
 };
 
 export const findOrCreateChatSettings = async <T extends typeof chatSettings>(
@@ -71,19 +73,6 @@ export const findOrCreateChatSettings = async <T extends typeof chatSettings>(
 
 export const getChatSettingsByChatTgId = async (chatTgId: number) => {
   return getOneChatSettings({ chatTgId });
-};
-
-export const updateChatLocale = async (
-  chatTgId: number,
-  locale: SupportedLocale,
-) => {
-  return findOrCreateChatSettings(
-    { chatTgId },
-    {
-      locale,
-      chatTgId,
-    },
-  );
 };
 
 export const createDefaultChatSettings = async (
