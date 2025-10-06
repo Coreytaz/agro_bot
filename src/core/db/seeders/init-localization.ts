@@ -26,6 +26,80 @@ const initialLocalizationData: LocalizationData[] = [
     value: "👋 Welcome to AgroBot — your assistant in plant disease diagnosis!\n\nI can help identify diseases from photos and provide treatment recommendations.\n\nTo get started:\n• Select a crop from the list\n• Take or upload a clear photo of the affected leaf\n• Use the /menu command to open the main menu",
     description: "Complete start message for /start command",
   },
+  // Команды - Меню
+  {
+    key: "commands.menu.message",
+    locale: "ru",
+    value: "👋 Приветствую! Я — ваш персональный Agro-эксперт!\n\nЯ помогу определить *болезнь растения* по фотографии листа и дам экологичные рекомендации по лечению и профилактике.\n\n📋 Главное меню",
+    description: "Полное сообщение команды /menu",
+  },
+  {
+    key: "commands.menu.message",
+    locale: "en",
+    value: "👋 Greetings! I am your personal Agro-expert!\n\nI will help identify *plant diseases* from leaf photographs and provide eco-friendly treatment and prevention recommendations.\n\n📋 Main Menu",
+    description: "Complete menu message for /menu command",
+  },
+  // Кнопки меню
+  {
+    key: "menu.button.diagnosis",
+    locale: "ru",
+    value: "🔍 Начать диагностику",
+    description: "Кнопка начала диагностики в главном меню",
+  },
+  {
+    key: "menu.button.diagnosis",
+    locale: "en",
+    value: "🔍 Start Diagnosis",
+    description: "Start diagnosis button in main menu",
+  },
+  {
+    key: "menu.button.knowledge",
+    locale: "ru",
+    value: "📚 База знаний",
+    description: "Кнопка базы знаний в главном меню",
+  },
+  {
+    key: "menu.button.knowledge",
+    locale: "en",
+    value: "📚 Knowledge Base",
+    description: "Knowledge base button in main menu",
+  },
+  {
+    key: "menu.button.help",
+    locale: "ru",
+    value: "❓ Помощь",
+    description: "Кнопка помощи в главном меню",
+  },
+  {
+    key: "menu.button.help",
+    locale: "en",
+    value: "❓ Help",
+    description: "Help button in main menu",
+  },
+  {
+    key: "menu.button.about",
+    locale: "ru",
+    value: "ℹ️ О боте",
+    description: "Кнопка информации о боте в главном меню",
+  },
+  {
+    key: "menu.button.about",
+    locale: "en",
+    value: "ℹ️ About Bot",
+    description: "About bot button in main menu",
+  },
+  {
+    key: "menu.button.settings",
+    locale: "ru",
+    value: "⚙️ Настройки",
+    description: "Кнопка настроек в главном меню",
+  },
+  {
+    key: "menu.button.settings",
+    locale: "en",
+    value: "⚙️ Settings",
+    description: "Settings button in main menu",
+  },
 
   {
     key: "menu.title",

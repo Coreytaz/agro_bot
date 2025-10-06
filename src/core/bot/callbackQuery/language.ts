@@ -10,6 +10,7 @@ import logger from "@core/utils/logger";
 import { InlineKeyboard } from "grammy";
 
 import type { Context } from "../core/interface/Context";
+import settings from "./settings";
 
 async function settingsLanguage(ctx: Context) {
   try {
@@ -99,5 +100,5 @@ export async function settingsBack(ctx: Context) {
 export default {
   "settings.language": settingsLanguage,
   "settings.language.set": settingsLanguageSet,
-  "settings.back": settingsBack,
+  "settings.back": settings,
 };

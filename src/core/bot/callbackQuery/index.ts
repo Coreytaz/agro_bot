@@ -4,7 +4,9 @@ import type { Context } from "../core/interface/Context";
 import { adminCallbackHandler } from "./admin";
 import cardRename from "./cardRename";
 import language from "./language";
+import menu from "./menu";
 import processStart from "./process.start";
+import settings from "./settings";
 import stickerWaitStart from "./sticker.wait.start";
 
 const callbackHandlers: Record<
@@ -20,6 +22,8 @@ const callbackHandlers: Record<
   "admin_statistics": adminCallbackHandler,
   "admin_users": adminCallbackHandler,
   "admin_back": adminCallbackHandler,
+  "menu": menu,
+  "settings": settings,
   ...language,
 };
 

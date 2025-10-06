@@ -8,6 +8,14 @@ export const localizationConfig = {
 export const LOCALIZATION_KEYS = {
   // Команды
   START_MESSAGE: "commands.start.message",
+  MENU_MESSAGE: "commands.menu.message",
+
+  // Кнопки меню
+  MENU_BUTTON_DIAGNOSIS: "menu.button.diagnosis",
+  MENU_BUTTON_KNOWLEDGE: "menu.button.knowledge",
+  MENU_BUTTON_HELP: "menu.button.help",
+  MENU_BUTTON_ABOUT: "menu.button.about",
+  MENU_BUTTON_SETTINGS: "menu.button.settings",
 
   MENU_TITLE: "menu.title",
   SETTINGS_TITLE: "settings.title",

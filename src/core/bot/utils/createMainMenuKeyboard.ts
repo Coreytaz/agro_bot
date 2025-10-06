@@ -1,10 +1,9 @@
 import { LOCALIZATION_KEYS } from "@config/localization.config";
-import { Command } from "@grammyjs/commands";
 import { InlineKeyboard } from "grammy";
 
-import type { Context } from "../core/interface/Context";
+import { Context } from "../core/interface/Context";
 
-async function createMainMenuKeyboard(
+export async function createMainMenuKeyboard(
   ctx: Context,
 ): Promise<[string, InlineKeyboard]> {
   const translations = await ctx.tm([
@@ -34,15 +33,3 @@ async function createMainMenuKeyboard(
 
   return [translations[LOCALIZATION_KEYS.MENU_MESSAGE], keyboard];
 }
-
-export const menuCommand = new Command<Context>(
-  "menu",
-  "Главное меню",
-  async ctx => {
-    const [menuMessage, keyboard] = await createMainMenuKeyboard(ctx);
-
-    await ctx.editAndReply.reply(menuMessage, { reply_markup: keyboard });
-  },
-);
-
-export default menuCommand;
