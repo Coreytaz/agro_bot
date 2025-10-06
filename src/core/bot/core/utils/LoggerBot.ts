@@ -30,6 +30,7 @@ export class LoggerBot extends Error {
             value: String(ctx.chatId),
             options: { spoiler: true },
           },
+          chatType: { title: "Тип чата", value: ctx.chat?.type },
           chatName: { title: "Название чата", value: ctx.chat?.title },
           role: {
             title: "Роль",

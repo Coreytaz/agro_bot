@@ -1,11 +1,16 @@
-import type { Command } from "@grammyjs/commands";
+import { Command } from "@grammyjs/commands";
 
+import { Context } from "../core/interface/Context";
+import blocking from "./blocking";
+import cancelCommand from "./cancel";
 import menuCommand from "./menu";
 import settingsCommand from "./settings";
 
-const commands = {
+const commands: Record<string, Command<Context>> = {
   "/menu": menuCommand,
   "/settings": settingsCommand,
-} as unknown as Record<string, Command>;
+  "/cancel": cancelCommand,
+  ...blocking,
+} as const;
 
 export default commands;

@@ -1,3 +1,4 @@
+export * from "./generateMyCommands";
 export * from "./getMessageId";
 export * from "./isCommand";
 export * from "./localization";
@@ -6,3 +7,4 @@ export * from "./LoggerBot";
 export * from "./paramsExtractorDB";
 export * from "./semiSeparator";
 export * from "./separator";
+export * from "./setMyCommands";

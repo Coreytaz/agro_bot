@@ -6,12 +6,7 @@ export default async function stickerWait(
   ctx: Context,
   next: NextFunction,
 ) {
-  // Отмена
-  if (ctx.message?.text === "/cancel") {
-    await ctx.sessionClear?.();
-    await ctx.editAndReply.reply("Действие отменено");
-    return;
-  }
+
 
   // Проверяем, пришёл ли стикер
   const sticker = ctx.message?.sticker;

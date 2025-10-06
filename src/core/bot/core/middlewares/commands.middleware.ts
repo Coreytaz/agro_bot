@@ -1,18 +1,10 @@
 /* eslint-disable @typescript-eslint/no-unnecessary-condition */
 import logger from "@core/utils/logger";
-import type { Command } from "@grammyjs/commands";
 import type { NextFunction } from "grammy";
 
 import cmds from "../../commands";
 import { Context } from "../interface/Context";
 import { LoggerBot } from "../utils";
-
-const myCommands = (cmds: Record<string, Command>) => {
-  return Object.values(cmds).map(command => ({
-    command: command.stringName,
-    description: command.description,
-  }));
-};
 
 const returnCommandHelper = async (
   command: string,
@@ -25,7 +17,6 @@ const returnCommandHelper = async (
       ctx,
       datapath: "bot.commands",
     });
-  await ctx.api.setMyCommands(myCommands(cmds));
   await commandFunc.middleware()(ctx, next);
 };
 
@@ -90,6 +81,11 @@ export default async function commands(ctx: Context, next: NextFunction) {
     await returnCommandHelper(command, ctx, next);
     return;
   } catch (error) {
-    logger.info(error instanceof Error ? error.message : String(error));
+    if (error instanceof Error) {
+      logger.error(error.message);
+    }
+    if (error instanceof LoggerBot) {
+      logger.error(error.message);
+    }
   }
 }

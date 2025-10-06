@@ -11,3 +11,4 @@ export * from "./role.models";
 export * from "./rule.models";
 export * from "./sessionTG.models";
 export * from "./typeTG.models";
+export * from "./userBan.models";

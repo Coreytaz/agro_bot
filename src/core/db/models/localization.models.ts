@@ -21,9 +21,6 @@ export const localization = sqliteTable("localization", {
   ...timestamps,
 });
 
-// Создаем уникальный индекс для комбинации key + locale
-// Это предотвратит дублирование переводов для одного ключа и локаль
-
 export const createOneLocalization = async <T extends typeof localization>(
   args: Omit<T["$inferInsert"], "id" | "createdAt" | "updatedAt">,
 ) => {

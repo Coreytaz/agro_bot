@@ -9,14 +9,8 @@ export default async function cardRenameWait(
   const name = ctx.message?.text?.trim();
   if (!name) {
     await ctx.editAndReply.reply(
-      "Введите текст для названия или /cancel чтобы отменить",
+      "Введите текст для названия",
     );
-    return;
-  }
-
-  if (name === "/cancel") {
-    await ctx.sessionClear?.();
-    await ctx.editAndReply.reply("Действие отменено");
     return;
   }
 

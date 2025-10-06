@@ -6,6 +6,7 @@ export interface LoggerData {
 
 export type KeyLogger =
   | "permissions.accessDenied"
+  | "permissions.accessDenied.banned"
   | "bot.middleware.getTypeDisabled"
   | "bot.middleware.userCheck"
   | "bot.middleware.emptyRole"
@@ -19,6 +20,11 @@ export const loggerDatapaths: Record<KeyLogger, LoggerData> = {
     title: "Отказ в доступе",
     active: true,
     datapath: "permissions.accessDenied",
+  },
+  "permissions.accessDenied.banned": {
+    title: "Заблокированный пользователь/чат",
+    active: true,
+    datapath: "permissions.accessDenied.banned",
   },
   "bot.middleware.userCheck": {
     title: "Проверка пользователя (middleware)",

@@ -51,7 +51,25 @@ const userRules = Object.assign({}, guestRules, {
   },
 });
 
-const moderatorPrivateRules = Object.assign({}, userRules, {});
+const banRules = Object.assign({}, userRules, {
+  "/blockChat": {
+    enable: true,
+  },
+  "/unblockChat": {
+    enable: true,
+  },
+  "/banUser": {
+    enable: true,
+  },
+  "/unbanUser": {
+    enable: true,
+  },
+  "/listBans": {
+    enable: true,
+  },
+});
+
+const moderatorPrivateRules = Object.assign({}, userRules, banRules);
 
 const initPermissionConfig: Record<
   ChatType,
