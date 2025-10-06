@@ -13,6 +13,20 @@ interface LocalizationData {
 
 // Начальные данные локализации для русского языка
 const initialLocalizationData: LocalizationData[] = [
+  // Команды - Стартовое сообщение
+  {
+    key: "commands.start.message",
+    locale: "ru",
+    value: "👋 Добро пожаловать в AgroBot — вашего помощника в диагностике болезней растений!\n\nЯ могу помочь определить заболевание по фото и дать рекомендации по лечению.\n\nЧтобы начать:\n• Выберите культуру из списка\n• Сделайте или загрузите четкое фото пораженного листа\n• Используйте команду /menu для вызова главного меню",
+    description: "Полное стартовое сообщение команды /start",
+  },
+  {
+    key: "commands.start.message",
+    locale: "en",
+    value: "👋 Welcome to AgroBot — your assistant in plant disease diagnosis!\n\nI can help identify diseases from photos and provide treatment recommendations.\n\nTo get started:\n• Select a crop from the list\n• Take or upload a clear photo of the affected leaf\n• Use the /menu command to open the main menu",
+    description: "Complete start message for /start command",
+  },
+
   {
     key: "menu.title",
     locale: "ru",
@@ -498,10 +512,27 @@ export default async function seedLocalization() {
       .all();
 
     if (existingLocalizations.length > 0) {
-      logger.info("Localization data already exists, skipping seeding.");
+      // Если данные уже есть, добавляем только новые переводы
+      const existingKeys = new Set(
+        existingLocalizations.map(item => `${item.key}-${item.locale}`)
+      );
+      
+      const newLocalizations = initialLocalizationData.filter(
+        item => !existingKeys.has(`${item.key}-${item.locale}`)
+      );
+
+      if (newLocalizations.length > 0) {
+        await drizzle.insert(localization).values(newLocalizations).run();
+        logger.info(
+          `Added ${newLocalizations.length} new localization entries.`
+        );
+      } else {
+        logger.info("No new localization entries to add.");
+      }
       return;
     }
 
+    // Если данных нет вообще, добавляем все
     await drizzle.insert(localization).values(initialLocalizationData).run();
 
     logger.info(

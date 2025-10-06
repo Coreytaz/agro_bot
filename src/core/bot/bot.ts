@@ -41,7 +41,9 @@ async function runBot() {
 
   await bot.init();
 
-  await setMyCommands(bot, { allow: ["/menu", "/settings", "/cancel"] });
+  await setMyCommands(bot, {
+    allow: ["/start", "/menu", "/settings", "/cancel"],
+  });
 
   runner = run(bot);
   logger.info(`Бот ${bot.botInfo.username} запущен и работает`);

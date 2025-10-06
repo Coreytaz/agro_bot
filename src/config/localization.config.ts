@@ -6,6 +6,9 @@ export const localizationConfig = {
 } as const;
 
 export const LOCALIZATION_KEYS = {
+  // Команды
+  START_MESSAGE: "commands.start.message",
+
   MENU_TITLE: "menu.title",
   SETTINGS_TITLE: "settings.title",
   SETTINGS_LANGUAGE: "settings.language",
