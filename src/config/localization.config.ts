@@ -18,6 +18,8 @@ export const LOCALIZATION_KEYS = {
   MENU_BUTTON_SETTINGS: "menu.button.settings",
 
   MENU_TITLE: "menu.title",
+  ABOUT_MESSAGE: "about.message",
+  HELP_MESSAGE: "help.message",
   SETTINGS_TITLE: "settings.title",
   SETTINGS_LANGUAGE: "settings.language",
   SETTINGS_LANGUAGE_SELECT: "settings.language.select",

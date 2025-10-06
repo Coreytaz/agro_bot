@@ -113,6 +113,32 @@ const initialLocalizationData: LocalizationData[] = [
     value: "📋 Main Menu",
     description: "Main menu title",
   },
+  // О боте
+  {
+    key: "about.message",
+    locale: "ru",
+    value: "🤖 **AgroBot v1.0**\n\nЭто демонстрационный бот для диагностики заболеваний растений с помощью искусственного интеллекта.\n\n**Как это работает?**\nВы загружаете фото, а нейросеть, обученная на тысячах изображений, анализирует его и сравнивает с известными заболеваниями выбранной культуры.",
+    description: "Сообщение страницы о боте",
+  },
+  {
+    key: "about.message",
+    locale: "en",
+    value: "🤖 **AgroBot v1.0**\n\nThis is a demonstration bot for diagnosing plant diseases using artificial intelligence.\n\n**How does it work?**\nYou upload a photo, and the neural network, trained on thousands of images, analyzes it and compares it with known diseases of the selected crop.",
+    description: "About bot page message",
+  },
+  // Помощь
+  {
+    key: "help.message",
+    locale: "ru",
+    value: "📖 **Справка по использованию бота:**\n\nНачните с команды /start или кнопки \"Начать диагностику\".\n\nВыберите культуру из предложенного списка.\n\nЗагрузите фото листа или плода с признаками заболевания.\n\nПолучите диагноз и рекомендации по лечению.\n\n**Важно:**\n• Фотография должна быть четкой, сделанной при хорошем освещении.\n• Бот не заменяет консультацию профессионального агронома в сложных случаях.\n\n**Доступные команды:**\n/start - запустить бота\n/help - показать эту справку\n/menu - открыть главное меню\n/about - информация о боте",
+    description: "Сообщение справки по использованию бота",
+  },
+  {
+    key: "help.message",
+    locale: "en",
+    value: "📖 **Bot Usage Guide:**\n\nStart with the /start command or \"Start Diagnosis\" button.\n\nSelect a crop from the suggested list.\n\nUpload a photo of a leaf or fruit with signs of disease.\n\nGet a diagnosis and treatment recommendations.\n\n**Important:**\n• The photo should be clear, taken in good lighting.\n• The bot does not replace consultation with a professional agronomist in complex cases.\n\n**Available commands:**\n/start - launch the bot\n/help - show this guide\n/menu - open main menu\n/about - bot information",
+    description: "Bot usage guide message",
+  },
   // Настройки
   {
     key: "settings.title",

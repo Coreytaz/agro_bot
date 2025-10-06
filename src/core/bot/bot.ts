@@ -42,7 +42,7 @@ async function runBot() {
   await bot.init();
 
   await setMyCommands(bot, {
-    allow: ["/start", "/menu", "/settings", "/cancel"],
+    allow: ["/start", "/menu", "/settings", "/about", "/cancel", "/help"],
   });
 
   runner = run(bot);

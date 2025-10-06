@@ -1,8 +1,10 @@
 import type { NextFunction } from "grammy";
 
 import type { Context } from "../core/interface/Context";
+import about from "./about";
 import { adminCallbackHandler } from "./admin";
 import cardRename from "./cardRename";
+import help from "./help";
 import language from "./language";
 import menu from "./menu";
 import processStart from "./process.start";
@@ -22,6 +24,8 @@ const callbackHandlers: Record<
   "admin_statistics": adminCallbackHandler,
   "admin_users": adminCallbackHandler,
   "admin_back": adminCallbackHandler,
+  "about": about,
+  "help": help,
   "menu": menu,
   "settings": settings,
   ...language,
