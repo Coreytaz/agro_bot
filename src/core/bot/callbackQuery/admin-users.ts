@@ -439,6 +439,8 @@ async function adminUserRole(ctx: Context) {
   const translations = await ctx.tm([
     LOCALIZATION_KEYS.BUTTON_BACK,
     LOCALIZATION_KEYS.ADMIN_USER_DETAIL_BUTTON_ROLE,
+    LOCALIZATION_KEYS.ADMIN_USER_ROLE_CURRENT,
+    LOCALIZATION_KEYS.ADMIN_USER_ROLE_SELECT,
   ]);
 
   try {
@@ -495,7 +497,7 @@ async function adminUserRole(ctx: Context) {
 
     await ctx.answerCallbackQuery();
     await ctx.editMessageText(
-      `${translations[LOCALIZATION_KEYS.ADMIN_USER_DETAIL_BUTTON_ROLE]}\nТекущая роль: ${role.name}\nВыберите новую роль для пользователя:`,
+      `${translations[LOCALIZATION_KEYS.ADMIN_USER_DETAIL_BUTTON_ROLE]}\n${translations[LOCALIZATION_KEYS.ADMIN_USER_ROLE_CURRENT]}: ${role.name}\n${translations[LOCALIZATION_KEYS.ADMIN_USER_ROLE_SELECT]}`,
       {
         reply_markup: keyboard,
       },

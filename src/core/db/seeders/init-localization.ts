@@ -181,7 +181,7 @@ const initialLocalizationData: LocalizationData[] = [
   {
     key: "settings.language.select",
     locale: "en",
-    value: "Select language:",
+    value: "🌐 Select language",
     description: "Language selection text",
   },
   {
@@ -212,7 +212,7 @@ const initialLocalizationData: LocalizationData[] = [
   {
     key: "language.en",
     locale: "ru",
-    value: "🇺🇸 English",
+    value: "🇺🇸 Английский",
     description: "Английский язык",
   },
   {
@@ -698,6 +698,32 @@ const initialLocalizationData: LocalizationData[] = [
     locale: "en",
     value: "🚫 Ban User",
     description: "Ban user button",
+  },
+
+  // Роли
+  {
+    key: "admin.user.role.current",
+    locale: "ru",
+    value: "🛡️ Текущая роль",
+    description: "Текущая роль пользователя",
+  },
+  {
+    key: "admin.user.role.current",
+    locale: "en",
+    value: "🛡️ Current Role",
+    description: "Current role of the user",
+  },
+  {
+    key: "admin.user.role.select",
+    locale: "ru",
+    value: "🔽 Выберите новую роль для пользователя",
+    description: "Выбор роли пользователя",
+  },
+  {
+    key: "admin.user.role.select",
+    locale: "en",
+    value: "🔽 Select New Role for User",
+    description: "Select user role",
   },
 ];
 

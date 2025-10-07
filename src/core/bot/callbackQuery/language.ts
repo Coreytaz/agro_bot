@@ -12,51 +12,22 @@ import { InlineKeyboard } from "grammy";
 import type { Context } from "../core/interface/Context";
 import settings from "./settings";
 
-async function settingsLanguage(ctx: Context) {
-  try {
-    const translate = await ctx.tm([
-      LOCALIZATION_KEYS.SETTINGS_LANGUAGE_SELECT,
-      LOCALIZATION_KEYS.LANGUAGE_RU,
-      LOCALIZATION_KEYS.LANGUAGE_EN,
-      LOCALIZATION_KEYS.BUTTON_BACK,
-    ]);
-
-    const keyboard = new InlineKeyboard()
-      .text(
-        translate[LOCALIZATION_KEYS.LANGUAGE_RU],
-        "settings.language.set{locale:ru}",
-      )
-      .text(
-        translate[LOCALIZATION_KEYS.LANGUAGE_EN],
-        "settings.language.set{locale:en}",
-      )
-      .row()
-      .text(translate[LOCALIZATION_KEYS.BUTTON_BACK], "settings.back");
-
-    await ctx.editAndReply.reply(
-      translate[LOCALIZATION_KEYS.SETTINGS_LANGUAGE_SELECT],
-      { reply_markup: keyboard },
-    );
-  } catch (error) {
-    logger.error("Error in settings language callback:", error);
-    await ctx.editAndReply.reply("❌ Произошла ошибка");
-  }
-}
+const SETTINGS_LANGUAGE_KEY = "settings.language";
+const SETTINGS_LANGUAGE_BACK_KEY = "settings.back";
 
 interface Params {
   // eslint-disable-next-line @typescript-eslint/no-redundant-type-constituents
   locale?: SupportedLocale & string;
 }
 
-export async function settingsLanguageSet(ctx: Context) {
-  try {
-    const params = ctx.paramsExtractor?.params as Params;
-    const locale = params.locale;
+async function settingsLanguage(ctx: Context) {
+  const params = ctx.paramsExtractor?.params as Params;
+  const locale = params.locale;
 
-    if (!locale || !["ru", "en"].includes(locale)) {
-      await ctx.editAndReply.reply("❌ Неверный язык");
-      return;
-    }
+  try {
+    if (!locale) throw new Error();
+
+    if (!["ru", "en"].includes(locale)) throw new Error("❌ Неверный язык");
 
     await drizzle.transaction(async tx => {
       let chatSettings = await getOneChatSettings(
@@ -75,53 +46,51 @@ export async function settingsLanguageSet(ctx: Context) {
         { ctx: tx },
       );
     });
+    await ctx.answerCallbackQuery("✅ Язык изменен");
+  } catch (error) {
+    if (error instanceof Error) {
+      await ctx.answerCallbackQuery(error.message);
+    }
+  }
 
-    const translate = await ctx.tm(
-      [
-        LOCALIZATION_KEYS.SETTINGS_LANGUAGE_CHANGED,
-        LOCALIZATION_KEYS.BUTTON_BACK,
-      ],
-      locale,
-    );
+  const translate = await ctx.tm(
+    [
+      LOCALIZATION_KEYS.SETTINGS_LANGUAGE_SELECT,
+      LOCALIZATION_KEYS.LANGUAGE_RU,
+      LOCALIZATION_KEYS.LANGUAGE_EN,
+      LOCALIZATION_KEYS.BUTTON_BACK,
+    ],
+    locale,
+  );
 
-    const keyboard = new InlineKeyboard().text(
-      translate[LOCALIZATION_KEYS.BUTTON_BACK],
-      "settings.language",
-    );
+  try {
+    const keyboard = new InlineKeyboard()
+      .text(
+        translate[LOCALIZATION_KEYS.LANGUAGE_RU],
+        `${SETTINGS_LANGUAGE_KEY}{locale:ru}`,
+      )
+      .text(
+        translate[LOCALIZATION_KEYS.LANGUAGE_EN],
+        `${SETTINGS_LANGUAGE_KEY}{locale:en}`,
+      )
+      .row()
+      .text(
+        translate[LOCALIZATION_KEYS.BUTTON_BACK],
+        SETTINGS_LANGUAGE_BACK_KEY,
+      );
 
     await ctx.editAndReply.reply(
-      translate[LOCALIZATION_KEYS.SETTINGS_LANGUAGE_CHANGED],
+      translate[LOCALIZATION_KEYS.SETTINGS_LANGUAGE_SELECT],
       { reply_markup: keyboard },
     );
   } catch (error) {
-    logger.error("Error in settings language set callback:", error);
-    await ctx.editAndReply.reply("❌ Произошла ошибка");
-  }
-}
-
-export async function settingsBack(ctx: Context) {
-  try {
-    const translate = await ctx.tm([
-      LOCALIZATION_KEYS.SETTINGS_TITLE,
-      LOCALIZATION_KEYS.SETTINGS_LANGUAGE,
-    ]);
-
-    const keyboard = new InlineKeyboard().text(
-      translate[LOCALIZATION_KEYS.SETTINGS_LANGUAGE],
-      "settings.language",
-    );
-
-    await ctx.editAndReply.reply(translate[LOCALIZATION_KEYS.SETTINGS_TITLE], {
-      reply_markup: keyboard,
-    });
-  } catch (error) {
-    logger.error("Error in settings back callback:", error);
-    await ctx.editAndReply.reply("❌ Произошла ошибка");
+    if (error instanceof Error) {
+      logger.error(error.message);
+    }
   }
 }
 
 export default {
-  "settings.language": settingsLanguage,
-  "settings.language.set": settingsLanguageSet,
-  "settings.back": settings,
+  [SETTINGS_LANGUAGE_KEY]: settingsLanguage,
+  [SETTINGS_LANGUAGE_BACK_KEY]: settings,
 };

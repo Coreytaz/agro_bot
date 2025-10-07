@@ -76,4 +76,8 @@ export const LOCALIZATION_KEYS = {
   ADMIN_USER_DETAIL_BUTTON_INFO: "admin.user.detail.button.info",
   ADMIN_USER_DETAIL_BUTTON_BAN: "admin.user.detail.button.ban",
   ADMIN_USER_DETAIL_BUTTON_UNBAN: "admin.user.detail.button.unban",
+
+  // Роли
+  ADMIN_USER_ROLE_CURRENT: "admin.user.role.current",
+  ADMIN_USER_ROLE_SELECT: "admin.user.role.select",
 } as const;
