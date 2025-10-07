@@ -69,4 +69,11 @@ export const LOCALIZATION_KEYS = {
   BAN_LIST_EMPTY: "blocking.list.empty",
   OPERATION_SUCCESS: "common.operation.success",
   OPERATION_ERROR: "common.operation.error",
+
+  // Детальная информации о пользователе
+  ADMIN_USER_DETAIL_TITLE: "admin.user.detail.title",
+  ADMIN_USER_DETAIL_BUTTON_ROLE: "admin.user.detail.button.role",
+  ADMIN_USER_DETAIL_BUTTON_INFO: "admin.user.detail.button.info",
+  ADMIN_USER_DETAIL_BUTTON_BAN: "admin.user.detail.button.ban",
+  ADMIN_USER_DETAIL_BUTTON_UNBAN: "admin.user.detail.button.unban",
 } as const;

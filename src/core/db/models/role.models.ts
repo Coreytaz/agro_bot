@@ -35,7 +35,8 @@ export const getOneRole = async (
 
 export const getAllRoles = async (
   args: Partial<typeof role.$inferSelect>,
+  options: { ctx?: typeof drizzle | DrizzleTx } = {},
   ...where: (SQLWrapper | undefined)[]
 ) => {
-  return getAll(role)(args, ...where);
+  return getAll(role, options)(args, ...where);
 };

@@ -2,6 +2,7 @@ import type { SQLWrapper } from "drizzle-orm";
 import { sql } from "drizzle-orm";
 import { int, sqliteTable, text } from "drizzle-orm/sqlite-core";
 
+import { drizzle } from "../drizzle";
 import { getOne, timestamps, updateOne } from "../utils";
 
 export const userBan = sqliteTable("user_ban", {
@@ -64,4 +65,18 @@ export const expireUserBan = async (banId: number) => {
       id: banId,
     },
   );
+};
+
+export const createUserBan = async (banData: {
+  targetId: string;
+  targetType: "user" | "chat";
+  chatId: string;
+  reason?: string;
+  bannedByAdminId: string;
+  expiresAt?: string | null;
+}) => {
+  return drizzle.insert(userBan).values({
+    ...banData,
+    isActive: 1,
+  });
 };

@@ -9,12 +9,12 @@ import { InlineKeyboard } from "grammy";
 
 import { Context } from "../core/interface/Context";
 import { createPagination, ParamsExtractorDB } from "../core/utils";
+import { ADMIN_BACK_KEY } from "./admin-back";
 
 const ADMIN_CONTENT_EDIT_KEY = "admin_content_edit";
 const ADMIN_CONTENT_EDIT_START_KEY = "admin_content_edit_start";
 export const ADMIN_CONTENT_EDIT_WAIT_KEY = "admin_content_edit_wait";
 const ADMIN_CONTENT_KEY = "admin_content";
-const ADMIN_BACK_KEY = "admin_back";
 
 async function adminContent(ctx: Context) {
   const params = ctx.paramsExtractor?.params ?? {};
@@ -112,14 +112,8 @@ async function adminContentEdit(ctx: Context) {
   ]);
 
   try {
-    const keyboard = new InlineKeyboard();
-
     const params = new ParamsExtractorDB(ADMIN_CONTENT_KEY);
     params.addParams({ page });
-    keyboard.text(
-      translations[LOCALIZATION_KEYS.BUTTON_BACK],
-      await params.toStringAsync({ isCleanParams: false }),
-    );
 
     if (!key) throw new Error("Key is not defined");
 

@@ -1,6 +1,8 @@
 import type { Context } from "../core/interface/Context";
 import { createAdminMenuKeyboard } from "../utils";
 
+export const ADMIN_BACK_KEY = "admin_back";
+
 async function adminBroadcast(ctx: Context) {
   await ctx.answerCallbackQuery();
   await ctx.editMessageText(
@@ -34,18 +36,6 @@ async function adminStatistics(ctx: Context) {
   });
 }
 
-async function adminUsers(ctx: Context) {
-  await ctx.answerCallbackQuery();
-  await ctx.editMessageText(
-    "👥 Пользователи\n\nЗдесь будет управление пользователями",
-    {
-      reply_markup: {
-        inline_keyboard: [[{ text: "⬅️ Назад", callback_data: "admin_back" }]],
-      },
-    },
-  );
-}
-
 async function adminBack(ctx: Context) {
   await ctx.answerCallbackQuery();
   const [title, keyboard] = await createAdminMenuKeyboard(ctx);
@@ -55,9 +45,5 @@ async function adminBack(ctx: Context) {
 }
 
 export default {
-  admin_broadcast: adminBroadcast,
-  admin_model_settings: adminModelSettings,
-  admin_statistics: adminStatistics,
-  admin_users: adminUsers,
-  admin_back: adminBack,
+  [ADMIN_BACK_KEY]: adminBack,
 };

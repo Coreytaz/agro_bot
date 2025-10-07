@@ -2,8 +2,9 @@ import type { NextFunction } from "grammy";
 
 import type { Context } from "../core/interface/Context";
 import about from "./about";
-import admin from "./admin";
+import adminBack from "./admin-back";
 import adminContent from "./admin-content";
+import adminUsers from "./admin-users";
 import cardRename from "./cardRename";
 import help from "./help";
 import language from "./language";
@@ -19,13 +20,14 @@ const callbackHandlers: Record<
   "card.rename": cardRename,
   "sticker.wait.start": stickerWaitStart,
   "process.start": processStart,
-  "about": about,
-  "help": help,
-  "menu": menu,
-  "settings": settings,
+  about: about,
+  help: help,
+  menu: menu,
+  settings: settings,
   ...language,
-  ...admin,
-  ...adminContent
+  ...adminBack,
+  ...adminContent,
+  ...adminUsers,
 };
 
 export default callbackHandlers;

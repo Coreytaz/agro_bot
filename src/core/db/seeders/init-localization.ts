@@ -637,6 +637,68 @@ const initialLocalizationData: LocalizationData[] = [
     value: "✏️ Edit Content",
     description: "Content edit button",
   },
+
+  // Детальная информация о пользователе
+  {
+    key: "admin.user.detail.title",
+    locale: "ru",
+    value: "👤 Детальная информация о пользователе",
+    description: "Заголовок детальной информации о пользователе",
+  },
+  {
+    key: "admin.user.detail.title",
+    locale: "en",
+    value: "👤 User Detail Information",
+    description: "User detail information title",
+  },
+  {
+    key: "admin.user.detail.button.role",
+    locale: "ru",
+    value: "🛡️ Изменить роль",
+    description: "Кнопка изменения роли пользователя",
+  },
+  {
+    key: "admin.user.detail.button.role",
+    locale: "en",
+    value: "🛡️ Change Role",
+    description: "Change role button",
+  },
+  {
+    key: "admin.user.detail.button.info",
+    locale: "ru",
+    value: "ℹ️ Просмотреть информацию",
+    description: "Кнопка просмотра информации о пользователе",
+  },
+  {
+    key: "admin.user.detail.button.info",
+    locale: "en",
+    value: "ℹ️ View Info",
+    description: "View user info button",
+  },
+  {
+    key: "admin.user.detail.button.unban",
+    locale: "ru",
+    value: "🚫 Разбанить пользователя",
+    description: "Кнопка разблокировки пользователя",
+  },
+  {
+    key: "admin.user.detail.button.unban",
+    locale: "en",
+    value: "🚫 Unban User",
+    description: "Unban user button",
+  },
+  {
+    key: "admin.user.detail.button.ban",
+    locale: "ru",
+    value: "🚫 Заблокировать пользователя",
+    description: "Кнопка блокировки пользователя",
+  },
+  {
+    key: "admin.user.detail.button.ban",
+    locale: "en",
+    value: "🚫 Ban User",
+    description: "Ban user button",
+  },
 ];
 
 export default async function seedLocalization() {

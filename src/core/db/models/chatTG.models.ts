@@ -35,9 +35,10 @@ export const findAndCountAllChatTG = async <T extends typeof chatTG>(
 
 export const getOneChatTG = async <T extends typeof chatTG>(
   args: Partial<T["$inferSelect"]>,
+  options: DrizzleOptions = {},
   ...where: (SQLWrapper | undefined)[]
 ) => {
-  return getOne(chatTG)(args, ...where);
+  return getOne(chatTG, options)(args, ...where);
 };
 
 export const updateOneChatTG = async <T extends typeof chatTG>(
