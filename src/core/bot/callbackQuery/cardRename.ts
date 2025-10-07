@@ -13,12 +13,6 @@ export default async function cardRename(
     return;
   }
 
-  await ctx.sessionSet?.({
-    route: "card.rename.wait",
-    data: { cardId },
-    ttlSec: 5 * 60,
-  });
-
   await ctx.editAndReply.reply(
     "Отправьте новое название карточки\n/cancel — отменить",
   );

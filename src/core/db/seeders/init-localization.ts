@@ -1,12 +1,12 @@
 import logger from "@core/utils/logger";
 
 import { drizzle } from "../drizzle";
-import { LocalizationKey } from "../interface";
+import { LocalizationKey, SupportedLocale } from "../interface";
 import { localization } from "../models";
 
 interface LocalizationData {
   key: LocalizationKey;
-  locale: string;
+  locale: SupportedLocale;
   value: string;
   description: string;
 }
@@ -17,26 +17,30 @@ const initialLocalizationData: LocalizationData[] = [
   {
     key: "commands.start.message",
     locale: "ru",
-    value: "👋 Добро пожаловать в AgroBot — вашего помощника в диагностике болезней растений!\n\nЯ могу помочь определить заболевание по фото и дать рекомендации по лечению.\n\nЧтобы начать:\n• Выберите культуру из списка\n• Сделайте или загрузите четкое фото пораженного листа\n• Используйте команду /menu для вызова главного меню",
+    value:
+      "👋 Добро пожаловать в AgroBot — вашего помощника в диагностике болезней растений!\n\nЯ могу помочь определить заболевание по фото и дать рекомендации по лечению.\n\nЧтобы начать:\n• Выберите культуру из списка\n• Сделайте или загрузите четкое фото пораженного листа\n• Используйте команду /menu для вызова главного меню",
     description: "Полное стартовое сообщение команды /start",
   },
   {
     key: "commands.start.message",
     locale: "en",
-    value: "👋 Welcome to AgroBot — your assistant in plant disease diagnosis!\n\nI can help identify diseases from photos and provide treatment recommendations.\n\nTo get started:\n• Select a crop from the list\n• Take or upload a clear photo of the affected leaf\n• Use the /menu command to open the main menu",
+    value:
+      "👋 Welcome to AgroBot — your assistant in plant disease diagnosis!\n\nI can help identify diseases from photos and provide treatment recommendations.\n\nTo get started:\n• Select a crop from the list\n• Take or upload a clear photo of the affected leaf\n• Use the /menu command to open the main menu",
     description: "Complete start message for /start command",
   },
   // Команды - Меню
   {
     key: "commands.menu.message",
     locale: "ru",
-    value: "👋 Приветствую! Я — ваш персональный Agro-эксперт!\n\nЯ помогу определить *болезнь растения* по фотографии листа и дам экологичные рекомендации по лечению и профилактике.\n\n📋 Главное меню",
+    value:
+      "👋 Приветствую! Я — ваш персональный Agro-эксперт!\n\nЯ помогу определить *болезнь растения* по фотографии листа и дам экологичные рекомендации по лечению и профилактике.\n\n📋 Главное меню",
     description: "Полное сообщение команды /menu",
   },
   {
     key: "commands.menu.message",
     locale: "en",
-    value: "👋 Greetings! I am your personal Agro-expert!\n\nI will help identify *plant diseases* from leaf photographs and provide eco-friendly treatment and prevention recommendations.\n\n📋 Main Menu",
+    value:
+      "👋 Greetings! I am your personal Agro-expert!\n\nI will help identify *plant diseases* from leaf photographs and provide eco-friendly treatment and prevention recommendations.\n\n📋 Main Menu",
     description: "Complete menu message for /menu command",
   },
   // Кнопки меню
@@ -117,26 +121,30 @@ const initialLocalizationData: LocalizationData[] = [
   {
     key: "about.message",
     locale: "ru",
-    value: "🤖 **AgroBot v1.0**\n\nЭто демонстрационный бот для диагностики заболеваний растений с помощью искусственного интеллекта.\n\n**Как это работает?**\nВы загружаете фото, а нейросеть, обученная на тысячах изображений, анализирует его и сравнивает с известными заболеваниями выбранной культуры.",
+    value:
+      "🤖 **AgroBot v1.0**\n\nЭто демонстрационный бот для диагностики заболеваний растений с помощью искусственного интеллекта.\n\n**Как это работает?**\nВы загружаете фото, а нейросеть, обученная на тысячах изображений, анализирует его и сравнивает с известными заболеваниями выбранной культуры.",
     description: "Сообщение страницы о боте",
   },
   {
     key: "about.message",
     locale: "en",
-    value: "🤖 **AgroBot v1.0**\n\nThis is a demonstration bot for diagnosing plant diseases using artificial intelligence.\n\n**How does it work?**\nYou upload a photo, and the neural network, trained on thousands of images, analyzes it and compares it with known diseases of the selected crop.",
+    value:
+      "🤖 **AgroBot v1.0**\n\nThis is a demonstration bot for diagnosing plant diseases using artificial intelligence.\n\n**How does it work?**\nYou upload a photo, and the neural network, trained on thousands of images, analyzes it and compares it with known diseases of the selected crop.",
     description: "About bot page message",
   },
   // Помощь
   {
     key: "help.message",
     locale: "ru",
-    value: "📖 **Справка по использованию бота:**\n\nНачните с команды /start или кнопки \"Начать диагностику\".\n\nВыберите культуру из предложенного списка.\n\nЗагрузите фото листа или плода с признаками заболевания.\n\nПолучите диагноз и рекомендации по лечению.\n\n**Важно:**\n• Фотография должна быть четкой, сделанной при хорошем освещении.\n• Бот не заменяет консультацию профессионального агронома в сложных случаях.\n\n**Доступные команды:**\n/start - запустить бота\n/help - показать эту справку\n/menu - открыть главное меню\n/about - информация о боте",
+    value:
+      '📖 **Справка по использованию бота:**\n\nНачните с команды /start или кнопки "Начать диагностику".\n\nВыберите культуру из предложенного списка.\n\nЗагрузите фото листа или плода с признаками заболевания.\n\nПолучите диагноз и рекомендации по лечению.\n\n**Важно:**\n• Фотография должна быть четкой, сделанной при хорошем освещении.\n• Бот не заменяет консультацию профессионального агронома в сложных случаях.\n\n**Доступные команды:**\n/start - запустить бота\n/help - показать эту справку\n/menu - открыть главное меню\n/about - информация о боте',
     description: "Сообщение справки по использованию бота",
   },
   {
     key: "help.message",
     locale: "en",
-    value: "📖 **Bot Usage Guide:**\n\nStart with the /start command or \"Start Diagnosis\" button.\n\nSelect a crop from the suggested list.\n\nUpload a photo of a leaf or fruit with signs of disease.\n\nGet a diagnosis and treatment recommendations.\n\n**Important:**\n• The photo should be clear, taken in good lighting.\n• The bot does not replace consultation with a professional agronomist in complex cases.\n\n**Available commands:**\n/start - launch the bot\n/help - show this guide\n/menu - open main menu\n/about - bot information",
+    value:
+      '📖 **Bot Usage Guide:**\n\nStart with the /start command or "Start Diagnosis" button.\n\nSelect a crop from the suggested list.\n\nUpload a photo of a leaf or fruit with signs of disease.\n\nGet a diagnosis and treatment recommendations.\n\n**Important:**\n• The photo should be clear, taken in good lighting.\n• The bot does not replace consultation with a professional agronomist in complex cases.\n\n**Available commands:**\n/start - launch the bot\n/help - show this guide\n/menu - open main menu\n/about - bot information',
     description: "Bot usage guide message",
   },
   // Настройки
@@ -213,7 +221,8 @@ const initialLocalizationData: LocalizationData[] = [
     value: "🇺🇸 English",
     description: "English language",
   },
-  // Кнопки
+
+  // Общие
   {
     key: "button.back",
     locale: "ru",
@@ -225,6 +234,18 @@ const initialLocalizationData: LocalizationData[] = [
     locale: "en",
     value: "⬅️ Back",
     description: "Back button",
+  },
+  {
+    key: "button.refresh",
+    locale: "ru",
+    value: "🔄 Обновить",
+    description: "Кнопка обновить",
+  },
+  {
+    key: "button.refresh",
+    locale: "en",
+    value: "🔄 Refresh",
+    description: "Refresh button",
   },
 
   // Система блокировок и банов
@@ -602,6 +623,20 @@ const initialLocalizationData: LocalizationData[] = [
     value: "👥 Users",
     description: "User management option in admin panel",
   },
+
+  // Контент
+  {
+    key: "admin.content.edit",
+    locale: "ru",
+    value: "✏️ Редактировать контент",
+    description: "Кнопка редактирования контента",
+  },
+  {
+    key: "admin.content.edit",
+    locale: "en",
+    value: "✏️ Edit Content",
+    description: "Content edit button",
+  },
 ];
 
 export default async function seedLocalization() {
@@ -614,17 +649,17 @@ export default async function seedLocalization() {
     if (existingLocalizations.length > 0) {
       // Если данные уже есть, добавляем только новые переводы
       const existingKeys = new Set(
-        existingLocalizations.map(item => `${item.key}-${item.locale}`)
+        existingLocalizations.map(item => `${item.key}-${item.locale}`),
       );
-      
+
       const newLocalizations = initialLocalizationData.filter(
-        item => !existingKeys.has(`${item.key}-${item.locale}`)
+        item => !existingKeys.has(`${item.key}-${item.locale}`),
       );
 
       if (newLocalizations.length > 0) {
         await drizzle.insert(localization).values(newLocalizations).run();
         logger.info(
-          `Added ${newLocalizations.length} new localization entries.`
+          `Added ${newLocalizations.length} new localization entries.`,
         );
       } else {
         logger.info("No new localization entries to add.");

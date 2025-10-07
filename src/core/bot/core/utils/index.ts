@@ -4,6 +4,7 @@ export * from "./isCommand";
 export * from "./localization";
 export { loggerTG } from "./logger";
 export * from "./LoggerBot";
+export * from "./pagination";
 export * from "./paramsExtractorDB";
 export * from "./semiSeparator";
 export * from "./separator";

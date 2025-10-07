@@ -3,6 +3,7 @@ import type { NextFunction } from "grammy";
 import type { Context } from "../core/interface/Context";
 import about from "./about";
 import admin from "./admin";
+import adminContent from "./admin-content";
 import cardRename from "./cardRename";
 import help from "./help";
 import language from "./language";
@@ -24,6 +25,7 @@ const callbackHandlers: Record<
   "settings": settings,
   ...language,
   ...admin,
+  ...adminContent
 };
 
 export default callbackHandlers;

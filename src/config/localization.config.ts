@@ -26,7 +26,11 @@ export const LOCALIZATION_KEYS = {
   SETTINGS_LANGUAGE_CHANGED: "settings.language.changed",
   LANGUAGE_RU: "language.ru",
   LANGUAGE_EN: "language.en",
+
+  // Общие
   BUTTON_BACK: "button.back",
+  BUTTON_REFRESH: "button.refresh",
+  BUTTON_CANCEL: "button.cancel",
   
   // Админ панель
   ADMIN_MENU_TITLE: "admin.menu.title",
@@ -35,6 +39,9 @@ export const LOCALIZATION_KEYS = {
   ADMIN_MENU_MODEL_SETTINGS: "admin.menu.model.settings",
   ADMIN_MENU_STATISTICS: "admin.menu.statistics",
   ADMIN_MENU_USERS: "admin.menu.users",
+
+  // Контент
+  ADMIN_CONTENT_EDIT: "admin.content.edit",
 
   // Блокировки и баны
   CHAT_BLOCKED: "blocking.chat.blocked",

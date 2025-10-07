@@ -1,7 +1,7 @@
 import { int, sqliteTable, text } from "drizzle-orm/sqlite-core";
 
 import { DrizzleOptions } from "../types";
-import { getOne } from "../utils";
+import { createMany, getOne } from "../utils";
 import { createOne } from "../utils/createOne";
 import { timestamps } from "../utils/timestamps.helpers";
 
@@ -23,7 +23,15 @@ export const getOneParamsTG = async (
 };
 
 export const createOneParamsTG = async (
-  args: Omit<typeof paramsTG.$inferInsert, keyof typeof timestamps>,
+  args: Omit<typeof paramsTG.$inferInsert, keyof typeof timestamps | "id">,
+  options: DrizzleOptions = {},
 ) => {
-  return createOne(paramsTG)(args);
+  return createOne(paramsTG, options)(args);
+};
+
+export const createManyParamsTG = async (
+  args: Omit<typeof paramsTG.$inferInsert, keyof typeof timestamps | "id">[],
+  options: DrizzleOptions = {},
+) => {
+  return createMany(paramsTG, options)(args);
 };

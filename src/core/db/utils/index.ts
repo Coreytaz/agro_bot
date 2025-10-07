@@ -1,3 +1,4 @@
+export * from "./createMany";
 export * from "./createOne";
 export * from "./findAndCountAll";
 export * from "./findOrCreate";
