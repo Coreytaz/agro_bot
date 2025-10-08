@@ -11,10 +11,6 @@ import type { Context } from "../interface/Context";
 import { ContextWithEditAndReply } from "../interface/ContextWithEditAndReply";
 import { getMessageId } from "../utils";
 
-export interface EditAndReply {
-  reply: (text: string, options?: unknown) => Promise<void>;
-}
-
 const find = async (ctx: Context) => {
   const replyMsg = await getOneChatReply({
     chatId: String(ctx.chat?.id),
@@ -106,6 +102,68 @@ const editAndReplyContext = (
         options,
       );
       return sentMessage;
+    },
+    replyWithPhoto: async (photo, options) => {
+      const replyMsg = await find(ctx);
+
+      if (!photo) {
+        if (!isEmpty(replyMsg)) {
+          try {
+            await ctx.api.deleteMessage(
+              Number(ctx.chat?.id),
+              Number(replyMsg?.messageId),
+            );
+          } catch {}
+        }
+
+        const text =
+          options && typeof options === "object" && "caption" in options
+            ? ((options as { caption?: string }).caption ?? "")
+            : "";
+
+        const message = await ctx.reply(text, options);
+        await create(ctx, message.message_id);
+        return message;
+      }
+
+      if (isEmpty(replyMsg)) {
+        const message = await ctx.replyWithPhoto(photo, options);
+        await create(ctx, message.message_id);
+        return message;
+      }
+
+      try {
+        const editedMessage = await ctx.api.editMessageMedia(
+          Number(ctx.chat?.id),
+          Number(replyMsg?.messageId),
+          {
+            type: "photo",
+            media: photo,
+            caption:
+              options && typeof options === "object" && "caption" in options
+                ? (options as { caption?: string }).caption
+                : undefined,
+          },
+          options as Parameters<typeof ctx.api.editMessageMedia>[3],
+        );
+        if (typeof editedMessage === "boolean") {
+          const message = await ctx.replyWithPhoto(photo, options);
+          await create(ctx, message.message_id);
+          return message;
+        }
+        return editedMessage as any;
+      } catch {
+        try {
+          await ctx.api.deleteMessage(
+            Number(ctx.chat?.id),
+            Number(replyMsg?.messageId),
+          );
+        } catch {}
+
+        const message = await ctx.replyWithPhoto(photo, options);
+        await create(ctx, message.message_id);
+        return message;
+      }
     },
   };
 };

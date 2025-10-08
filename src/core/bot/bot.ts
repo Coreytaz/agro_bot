@@ -17,6 +17,7 @@ import {
   userCheck,
 } from "./core/middlewares";
 import { setMyCommands } from "./core/utils";
+import { initializeCronManager, stopCronManager } from "./cronManager";
 
 let runner: RunnerHandle;
 
@@ -45,12 +46,17 @@ async function runBot() {
     allow: ["/start", "/menu", "/settings", "/about", "/cancel", "/help"],
   });
 
+  await initializeCronManager();
+
   runner = run(bot);
   logger.info(`Бот ${bot.botInfo.username} запущен и работает`);
 }
 
 async function stopBot() {
   logger.info("Остановка бота...");
+
+  stopCronManager();
+
   if (runner.isRunning()) {
     await bot.stop();
   }

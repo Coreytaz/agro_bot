@@ -1,3 +1,4 @@
+export * from "./broadcast.models";
 export * from "./chatAdminsTG.models";
 export * from "./chatReplyTG.models";
 export * from "./chatSettings.models";

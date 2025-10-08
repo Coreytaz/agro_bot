@@ -6,7 +6,6 @@ import { progressBar, sleep } from "../core/utils/progress";
 export default async function processStart(ctx: Context, next: NextFunction) {
   await ctx.answerCallbackQuery();
 
-  // Отправляем отдельное сообщение прогресса и запоминаем его id
   const chatId = Number(ctx.chat?.id);
   const initial = await ctx.api.sendMessage(chatId, progressBar(0));
   const messageId = initial.message_id;
