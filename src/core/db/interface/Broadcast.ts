@@ -8,12 +8,9 @@ export interface IBroadcast {
   sentCount: number | null;
   errorCount: number | null;
   createdBy: string;
-  sentAt: string | null;
   cronExpression: string | null;
   isScheduled: boolean;
   isRecurring: boolean;
-  nextRunAt: string | null;
-  lastRunAt: string | null;
   created_at: string;
   updated_at: string;
 }
@@ -26,7 +23,6 @@ export interface ICreateBroadcast {
   cronExpression?: string;
   isScheduled?: boolean;
   isRecurring?: boolean;
-  sentAt?: string;
 }
 
 export interface IUpdateBroadcast {
@@ -37,12 +33,9 @@ export interface IUpdateBroadcast {
   totalUsers?: number;
   sentCount?: number;
   errorCount?: number;
-  sentAt?: string;
   cronExpression?: string;
   isScheduled?: boolean;
   isRecurring?: boolean;
-  nextRunAt?: string;
-  lastRunAt?: string;
 }
 
 export type BroadcastStatus = "draft" | "sending" | "sent" | "error" | "scheduled";

@@ -10,6 +10,7 @@ import broadcastSchedule from "./broadcast-schedule";
 import help from "./help";
 import language from "./language";
 import menu from "./menu";
+import notification from "./notification";
 import processStart from "./process.start";
 import settings from "./settings";
 
@@ -28,6 +29,7 @@ const callbackHandlers: Record<
   ...adminUsers,
   ...broadcast,
   ...broadcastSchedule,
+  ...notification,
 };
 
 export default callbackHandlers;

@@ -196,6 +196,66 @@ const initialLocalizationData: LocalizationData[] = [
     value: "✅ Language changed successfully!",
     description: "Language change confirmation",
   },
+  {
+    key: "settings.notifications",
+    locale: "ru",
+    value: "🔔 Уведомления",
+    description: "Настройки уведомлений",
+  },
+  {
+    key: "settings.notifications",
+    locale: "en",
+    value: "🔔 Notifications",
+    description: "Notification settings",
+  },
+  {
+    key: "settings.notifications.on",
+    locale: "ru",
+    value: "🔔 Включить",
+    description: "Кнопка включения уведомлений",
+  },
+  {
+    key: "settings.notifications.on",
+    locale: "en",
+    value: "🔔 Turn On",
+    description: "Turn on notifications button",
+  },
+  {
+    key: "settings.notifications.off",
+    locale: "ru",
+    value: "🔕 Отключить",
+    description: "Кнопка отключения уведомлений",
+  },
+  {
+    key: "settings.notifications.off",
+    locale: "en",
+    value: "🔕 Turn Off",
+    description: "Turn off notifications button",
+  },
+  {
+    key: "settings.notifications.enabled",
+    locale: "ru",
+    value: "✅ Уведомления включены",
+    description: "Статус включенных уведомлений",
+  },
+  {
+    key: "settings.notifications.enabled",
+    locale: "en",
+    value: "✅ Notifications enabled",
+    description: "Notifications enabled status",
+  },
+  {
+    key: "settings.notifications.disabled",
+    locale: "ru",
+    value: "❌ Уведомления отключены",
+    description: "Статус отключенных уведомлений",
+  },
+  {
+    key: "settings.notifications.disabled",
+    locale: "en",
+    value: "❌ Notifications disabled",
+    description: "Notifications disabled status",
+  },
   // Языки
   {
     key: "language.ru",
@@ -1022,7 +1082,8 @@ const initialLocalizationData: LocalizationData[] = [
   {
     key: "broadcast.schedule.custom.enter",
     locale: "ru",
-    value: "Введите cron-выражение (например: 0 9 * * * для ежедневной отправки в 9:00)",
+    value:
+      "Введите cron-выражение (например: 0 9 * * * для ежедневной отправки в 9:00)",
     description: "Запрос ввода cron-выражения",
   },
   {

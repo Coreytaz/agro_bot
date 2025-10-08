@@ -1,4 +1,5 @@
-import { getAllChatTG } from "@core/db/models";
+import { IBroadcast } from "@core/db/interface";
+import { getAllChatTG, updateOneBroadcast } from "@core/db/models";
 import logger from "@core/utils/logger";
 import { CronJob } from "cron";
 import { Bot } from "grammy";
@@ -15,7 +16,6 @@ import {
 
 interface ICronManagerConfig {
   timezone?: string;
-  maxConcurrentJobs?: number;
   enableLogging?: boolean;
 }
 
@@ -33,71 +33,43 @@ export const getBroadcastStats = async (broadcastId: number) => {
     sentCount: broadcast.sentCount ?? 0,
     errorCount: broadcast.errorCount ?? 0,
     createdAt: broadcast.created_at,
-    sentAt: broadcast.sentAt,
   };
 };
 
 const sendBroadcast = async (
   bot: Bot,
-  broadcastId: number,
+  broadcast: IBroadcast,
 ): Promise<{ success: boolean; totalSent: number; errors: number }> => {
   try {
-    // Получаем данные рассылки
-    const broadcast = await getBroadcastById(broadcastId);
-    if (!broadcast) {
-      throw new Error(`Рассылка с ID ${broadcastId} не найдена`);
-    }
+    await updateOneBroadcast({ status: "sending" }, { id: broadcast.id });
 
-    if (broadcast.status !== "draft") {
-      throw new Error(
-        `Рассылка уже отправлена или находится в процессе отправки`,
-      );
-    }
+    const users = await getAllChatTG();
 
-    // Устанавливаем статус "отправляется"
-    await updateBroadcastStatus(broadcastId, "sending");
-
-    // Получаем всех пользователей
-    const users = await getAllChatTG({});
     const totalUsers = users.length;
 
     let sentCount = 0;
     let errorCount = 0;
 
-    // Обновляем общее количество пользователей
-    await updateBroadcastProgress(broadcastId, 0, 0, totalUsers);
+    await updateBroadcastProgress(broadcast.id, 0, 0, totalUsers);
 
-    // Отправляем сообщения пользователям
     for (const user of users) {
       try {
         if (broadcast.imageUrl) {
-          // Отправляем с изображением
           await bot.api.sendPhoto(user.chatId, broadcast.imageUrl, {
-            caption: `${broadcast.title}\n\n${broadcast.message}`,
-            parse_mode: "HTML",
+            caption: broadcast.message,
           });
         } else {
-          // Отправляем только текст
-          await bot.api.sendMessage(
-            user.chatId,
-            `${broadcast.title}\n\n${broadcast.message}`,
-            {
-              parse_mode: "HTML",
-            },
-          );
+          await bot.api.sendMessage(user.chatId, broadcast.message, {});
         }
 
         sentCount++;
 
-        // Периодически обновляем прогресс
         if (sentCount % 10 === 0) {
-          await updateBroadcastProgress(broadcastId, sentCount, errorCount);
+          await updateBroadcastProgress(broadcast.id, sentCount, errorCount);
         }
 
-        // Небольшая задержка между отправками для избежания rate limiting
         await new Promise(resolve => setTimeout(resolve, 100));
       } catch (error: any) {
-        // Если пользователь заблокировал бота, пропускаем его
         if (error?.error_code === 403) {
           errorCount++;
           continue;
@@ -106,11 +78,9 @@ const sendBroadcast = async (
       }
     }
 
-    // Обновляем финальный прогресс
-    await updateBroadcastProgress(broadcastId, sentCount, errorCount);
+    await updateBroadcastProgress(broadcast.id, sentCount, errorCount);
 
-    // Завершаем рассылку
-    await completeBroadcast(broadcastId);
+    await completeBroadcast(broadcast.id);
 
     return {
       success: true,
@@ -118,9 +88,7 @@ const sendBroadcast = async (
       errors: errorCount,
     };
   } catch {
-    // Устанавливаем статус ошибки
-    await updateBroadcastStatus(broadcastId, "error");
-
+    await updateBroadcastStatus(broadcast.id, "error");
     return {
       success: false,
       totalSent: 0,
@@ -139,7 +107,6 @@ export class BroadcastCronManager {
     this.bot = bot;
     this.config = {
       timezone: config.timezone ?? "Europe/Moscow",
-      maxConcurrentJobs: config.maxConcurrentJobs ?? 10,
       enableLogging: config.enableLogging ?? true,
       ...config,
     };
@@ -184,9 +151,7 @@ export class BroadcastCronManager {
       );
 
       for (const broadcast of filteredBroadcasts) {
-        if (broadcast.cronExpression) {
-          await this.scheduleJob(broadcast);
-        }
+        await this.scheduleJob(broadcast);
       }
 
       if (this.config.enableLogging) {
@@ -214,10 +179,8 @@ export class BroadcastCronManager {
         isScheduled: true,
         isRecurring,
         status: "scheduled",
-        nextRunAt: this.getNextRunTime(cronExpression),
       });
 
-      // Получаем обновленную рассылку
       const updatedBroadcast = await getBroadcastById(broadcastId);
       if (updatedBroadcast) {
         await this.scheduleJob(updatedBroadcast);
@@ -248,7 +211,6 @@ export class BroadcastCronManager {
         isScheduled: false,
         status: "draft",
         cronExpression: undefined,
-        nextRunAt: undefined,
       });
 
       if (this.config.enableLogging) {
@@ -275,16 +237,14 @@ export class BroadcastCronManager {
     try {
       const job = new CronJob(
         _broadcast.cronExpression,
-        async () => {
-          await this.executeBroadcast(_broadcast.id);
-        },
+        () => this.executeBroadcast(_broadcast.id),
         null,
         false,
         this.config.timezone,
       );
 
-      // Останавливаем существующую задачу если есть
       const existingJob = this.jobs.get(_broadcast.id);
+
       if (existingJob) {
         await existingJob.stop();
       }
@@ -305,57 +265,46 @@ export class BroadcastCronManager {
 
   private async executeBroadcast(broadcastId: number): Promise<void> {
     try {
-      const broadcast = await getBroadcastById(broadcastId);
+      if (this.config.enableLogging) {
+        logger.info(`Executing scheduled broadcast ${broadcastId}`);
+      }
+
+      const broadcast = await updateBroadcast(broadcastId, {
+        status: "sending",
+      });
+
       if (!broadcast) {
         logger.error(`Broadcast ${broadcastId} not found during execution`);
         return;
       }
 
-      if (this.config.enableLogging) {
-        logger.info(`Executing scheduled broadcast ${broadcastId}`);
+      const result = await sendBroadcast(this.bot, broadcast);
+
+      if (!result.success) {
+        throw new Error("Broadcast execution failed");
       }
 
-      // Обновляем статус на "sending"
-      await updateBroadcast(broadcastId, {
-        status: "sending",
-        lastRunAt: new Date().toISOString(),
-      });
+      if (!broadcast.isRecurring) {
+        await updateBroadcast(broadcastId, {
+          status: "sent",
+          isScheduled: false,
+        });
 
-      const result = await sendBroadcast(this.bot, broadcastId);
-
-      if (result.success) {
-        if (!broadcast.isRecurring) {
-          await updateBroadcast(broadcastId, {
-            status: "sent",
-            isScheduled: false,
-          });
-
-          // Удаляем задачу
-          const job = this.jobs.get(broadcastId);
-          if (job) {
-            await job.stop();
-            this.jobs.delete(broadcastId);
-          }
-        } else {
-          // Для повторяющихся рассылок обновляем nextRunAt
-          const nextRunTime = broadcast.cronExpression
-            ? this.getNextRunTime(broadcast.cronExpression)
-            : undefined;
-
-          await updateBroadcast(broadcastId, {
-            status: "scheduled",
-            nextRunAt: nextRunTime,
-          });
-        }
-
-        if (this.config.enableLogging) {
-          logger.info(
-            `Broadcast ${broadcastId} executed successfully. Sent: ${result.totalSent}, Errors: ${result.errors}`,
-          );
+        const job = this.jobs.get(broadcastId);
+        if (job) {
+          await job.stop();
+          this.jobs.delete(broadcastId);
         }
       } else {
-        await updateBroadcast(broadcastId, { status: "error" });
-        logger.error(`Failed to execute broadcast ${broadcastId}`);
+        await updateBroadcast(broadcastId, {
+          status: "scheduled",
+        });
+      }
+
+      if (this.config.enableLogging) {
+        logger.info(
+          `Broadcast ${broadcastId} executed successfully. Sent: ${result.totalSent}, Errors: ${result.errors}`,
+        );
       }
     } catch (error) {
       logger.error(`Error executing broadcast ${broadcastId}:`, error);
@@ -367,9 +316,8 @@ export class BroadcastCronManager {
     try {
       const job = new CronJob(
         cronExpression,
-        () => {
-          /* empty */
-        },
+        // eslint-disable-next-line @typescript-eslint/no-empty-function
+        () => {},
         null,
         false,
         this.config.timezone,

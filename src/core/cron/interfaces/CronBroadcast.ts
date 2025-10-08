@@ -5,8 +5,6 @@ export interface IScheduledBroadcast {
   scheduledAt: string;
   status: 'pending' | 'running' | 'completed' | 'failed';
   isRecurring: boolean;
-  nextRunAt?: string;
-  lastRunAt?: string;
   created_at: string;
   updated_at: string;
 }
@@ -27,6 +25,5 @@ export interface IBroadcastJob {
 
 export interface ICronManagerConfig {
   timezone?: string;
-  maxConcurrentJobs?: number;
   enableLogging?: boolean;
 }

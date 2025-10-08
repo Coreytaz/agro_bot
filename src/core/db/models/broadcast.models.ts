@@ -22,17 +22,14 @@ export const broadcast = sqliteTable("broadcast", {
   title: text().notNull(), // Заголовок рассылки
   message: text().notNull(), // Текст сообщения
   imageUrl: text(), // URL изображения (опционально)
-  status: text().notNull().default("draft"), // Статус: draft, sent, sending, error, scheduled
+  status: text().notNull().default("draft"),
   totalUsers: int().default(0), // Общее количество пользователей для отправки
   sentCount: int().default(0), // Количество успешно отправленных сообщений
   errorCount: int().default(0), // Количество ошибок отправки
   createdBy: text().notNull(), // ID админа, создавшего рассылку
-  sentAt: text(), // Время отправки или cron выражение для планирования
   cronExpression: text(), // Cron выражение для повторяющихся рассылок
   isScheduled: int({ mode: "boolean" }).default(false), // Запланирована ли рассылка
   isRecurring: int({ mode: "boolean" }).default(false), // Повторяющаяся ли рассылка
-  nextRunAt: text(), // Следующий запуск для cron задач
-  lastRunAt: text(), // Последний запуск для cron задач
   ...timestamps,
 });
 
@@ -133,7 +130,6 @@ export const completeBroadcast = async (
   return (await updateOneBroadcast(
     {
       status: "sent",
-      sentAt: new Date().toISOString(),
     },
     { id },
   )) as IBroadcast | null;

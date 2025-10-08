@@ -20,7 +20,6 @@ export const sendBroadcastNow = async (broadcastId: number): Promise<void> => {
 
   await updateBroadcast(broadcastId, {
     status: "sending",
-    sentAt: new Date().toISOString(),
   });
 
   try {

@@ -50,7 +50,7 @@ export const updateOneChatTG = async <T extends typeof chatTG>(
 };
 
 export const getAllChatTG = async <T extends typeof chatTG>(
-  args: Partial<T["$inferSelect"]>,
+  args?: Partial<T["$inferSelect"]>,
   options: DrizzleOptions = {},
   ...rest: (SQLWrapper | undefined)[]
 ) => {

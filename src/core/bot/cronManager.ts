@@ -15,7 +15,6 @@ export async function initializeCronManager(): Promise<void> {
     cronManager = new BroadcastCronManager(bot, {
       timezone: "Europe/Moscow",
       enableLogging: true,
-      maxConcurrentJobs: 10,
     });
 
     await cronManager.start();

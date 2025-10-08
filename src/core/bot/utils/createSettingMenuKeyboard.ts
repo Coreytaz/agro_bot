@@ -9,6 +9,7 @@ export async function createSettingMenuKeyboard(
   const translations = await ctx.tm([
     LOCALIZATION_KEYS.SETTINGS_TITLE,
     LOCALIZATION_KEYS.SETTINGS_LANGUAGE,
+    LOCALIZATION_KEYS.SETTINGS_NOTIFICATIONS,
     LOCALIZATION_KEYS.BUTTON_BACK,
   ]);
 
@@ -16,6 +17,11 @@ export async function createSettingMenuKeyboard(
     .text(
       translations[LOCALIZATION_KEYS.SETTINGS_LANGUAGE],
       "settings.language",
+    )
+    .row()
+    .text(
+      translations[LOCALIZATION_KEYS.SETTINGS_NOTIFICATIONS],
+      "settings.notification",
     )
     .row()
     .text(translations[LOCALIZATION_KEYS.BUTTON_BACK], "menu");
