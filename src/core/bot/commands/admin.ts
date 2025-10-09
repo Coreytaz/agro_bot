@@ -9,7 +9,7 @@ const adminCommand = new Command<Context>(
   async ctx => {
     const [title, keyboard] = await createAdminMenuKeyboard(ctx);
 
-    await ctx.reply(title, {
+    await ctx.editAndReply.reply(title, {
       reply_markup: keyboard,
     });
   },

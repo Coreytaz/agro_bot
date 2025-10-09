@@ -835,30 +835,6 @@ const initialLocalizationData: LocalizationData[] = [
     value: "📋 All Broadcasts",
     description: "View all broadcasts button",
   },
-  {
-    key: "broadcast.menu.drafts",
-    locale: "ru",
-    value: "📝 Черновики",
-    description: "Кнопка просмотра черновиков рассылок",
-  },
-  {
-    key: "broadcast.menu.drafts",
-    locale: "en",
-    value: "📝 Drafts",
-    description: "View broadcast drafts button",
-  },
-  {
-    key: "broadcast.menu.history",
-    locale: "ru",
-    value: "📚 История",
-    description: "Кнопка просмотра истории рассылок",
-  },
-  {
-    key: "broadcast.menu.history",
-    locale: "en",
-    value: "📚 History",
-    description: "View broadcast history button",
-  },
 
   // Рассылка - Создание
   {
@@ -1166,18 +1142,6 @@ const initialLocalizationData: LocalizationData[] = [
   },
 
   // Рассылка - Статусы
-  {
-    key: "broadcast.status.draft",
-    locale: "ru",
-    value: "📝 Черновик",
-    description: "Статус черновика рассылки",
-  },
-  {
-    key: "broadcast.status.draft",
-    locale: "en",
-    value: "📝 Draft",
-    description: "Broadcast draft status",
-  },
   {
     key: "broadcast.status.sending",
     locale: "ru",

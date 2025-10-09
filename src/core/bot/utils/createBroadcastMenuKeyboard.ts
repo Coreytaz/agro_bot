@@ -10,8 +10,6 @@ export const createBroadcastMenuKeyboard = async (
     LOCALIZATION_KEYS.BROADCAST_MENU_TITLE,
     LOCALIZATION_KEYS.BROADCAST_MENU_CREATE,
     LOCALIZATION_KEYS.BROADCAST_MENU_LIST,
-    LOCALIZATION_KEYS.BROADCAST_MENU_DRAFTS,
-    LOCALIZATION_KEYS.BROADCAST_MENU_HISTORY,
     LOCALIZATION_KEYS.COMMON_BACK,
   ]);
 
@@ -21,10 +19,6 @@ export const createBroadcastMenuKeyboard = async (
       .text(translations[LOCALIZATION_KEYS.BROADCAST_MENU_CREATE], "broadcast_create")
       .row()
       .text(translations[LOCALIZATION_KEYS.BROADCAST_MENU_LIST], "broadcast_list")
-      .row()
-      .text(translations[LOCALIZATION_KEYS.BROADCAST_MENU_DRAFTS], "broadcast_drafts")
-      .row()
-      .text(translations[LOCALIZATION_KEYS.BROADCAST_MENU_HISTORY], "broadcast_history")
       .row()
       .text(translations[LOCALIZATION_KEYS.COMMON_BACK], "admin_back"),
   ];

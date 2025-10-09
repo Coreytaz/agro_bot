@@ -41,7 +41,7 @@ const broadcastCreateHandler = async (ctx: Context): Promise<void> => {
 
 const broadcastSendNowHandler = async (ctx: Context): Promise<void> => {
   const sessionData = ctx.session?.data as any;
-  const { title, message, imageUrl } = sessionData ?? {};
+  const { title, message, media } = sessionData ?? {};
 
   if (!title || !message) {
     await ctx.answerCallbackQuery("Ошибка: данные рассылки не найдены");
@@ -53,8 +53,10 @@ const broadcastSendNowHandler = async (ctx: Context): Promise<void> => {
     const broadcast = await createBroadcast({
       title,
       message,
-      imageUrl,
+      media,
       createdBy: ctx.chatDB.chatId,
+      isRecurring: false,
+      isScheduled: false,
     });
 
     await sendBroadcastNow(broadcast.id);
@@ -69,8 +71,13 @@ const broadcastSendNowHandler = async (ctx: Context): Promise<void> => {
     );
 
     const [titleMsg, keyboard] = await createBroadcastMenuKeyboard(ctx);
-    await ctx.editMessageText(titleMsg, {
-      reply_markup: keyboard,
+
+    await ctx.editAndReply.universalReply({
+      content: titleMsg,
+      type: "text",
+      options: {
+        reply_markup: keyboard,
+      },
     });
   } catch {
     const translations = await ctx.tm([LOCALIZATION_KEYS.BROADCAST_SEND_ERROR]);

@@ -14,7 +14,7 @@ export const broadcast = sqliteTable("broadcast", {
   id: int().primaryKey({ autoIncrement: true }),
   title: text().notNull(),
   message: text().notNull(),
-  imageUrl: text(),
+  media: text({ mode: "json" }).$type<IBroadcast["media"]>(),
   status: text().notNull().default("draft"),
   totalUsers: int().default(0),
   sentCount: int().default(0),

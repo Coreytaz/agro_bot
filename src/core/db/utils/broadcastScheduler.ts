@@ -1,8 +1,7 @@
-import { getCronManager } from "@core/bot";
 import { bot } from "@core/bot/core";
 import { sendBroadcast } from "@core/cron";
 
-import type { IBroadcast, IUpdateBroadcast } from "../interface";
+import type { IBroadcast } from "../interface";
 import { getBroadcastById, updateBroadcast } from "../models/broadcast.models";
 
 export const COMMON_CRON_EXPRESSIONS = {
@@ -25,29 +24,9 @@ export const sendBroadcastNow = async (broadcastId: number): Promise<void> => {
   }
 };
 
-export const scheduleBroadcast = async (
-  broadcastId: number,
-  cronExpression: string,
-  isRecurring = false,
-): Promise<void> => {
-  const updateData: IUpdateBroadcast = {
-    cronExpression,
-    isScheduled: true,
-    isRecurring,
-  };
-
-  await updateBroadcast(broadcastId, updateData);
-};
-
 export const executeBroadcast = async (
   broadcast: IBroadcast,
 ): Promise<void> => {
-  const cronManager = getCronManager();
-
-  if (!cronManager) {
-    throw new Error("Cron Manager not available");
-  }
-
   const result = await sendBroadcast(bot, broadcast);
 
   if (!result.success) {
@@ -57,7 +36,6 @@ export const executeBroadcast = async (
   if (!broadcast.isRecurring) {
     await updateBroadcast(broadcast.id, {
       status: "sent",
-      isScheduled: false,
     });
   }
 };

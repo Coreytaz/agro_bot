@@ -5,10 +5,10 @@ import { InlineKeyboard } from "grammy";
 
 import {
   COMMON_CRON_EXPRESSIONS,
-  scheduleBroadcast,
   sendBroadcastNow,
 } from "../../db/utils/broadcastScheduler";
 import type { Context } from "../core/interface/Context";
+import { getCronManager } from "../cronManager";
 import { createBroadcastMenuKeyboard } from "../utils";
 
 const broadcastScheduleSelectHandler = async (ctx: Context): Promise<void> => {
@@ -47,17 +47,18 @@ const broadcastScheduleSelectHandler = async (ctx: Context): Promise<void> => {
       "broadcast_cancel_create",
     );
 
-  await ctx.editMessageText(
-    translations[LOCALIZATION_KEYS.BROADCAST_SCHEDULE_SELECT],
-    {
+  await ctx.editAndReply.universalReply({
+    type: "text",
+    content: translations[LOCALIZATION_KEYS.BROADCAST_SCHEDULE_SELECT],
+    options: {
       reply_markup: keyboard,
     },
-  );
+  });
 };
 
 const broadcastSendNowHandler = async (ctx: Context): Promise<void> => {
   const sessionData = ctx.session?.data as any;
-  const { title, message, imageUrl } = sessionData ?? {};
+  const { title, message, media } = sessionData ?? {};
 
   if (!title || !message) {
     await ctx.answerCallbackQuery("Ошибка: данные рассылки не найдены");
@@ -69,7 +70,7 @@ const broadcastSendNowHandler = async (ctx: Context): Promise<void> => {
     const broadcast = await createBroadcast({
       title,
       message,
-      imageUrl,
+      media,
       createdBy: ctx.chatDB.chatId,
     });
 
@@ -99,7 +100,7 @@ const broadcastSendNowHandler = async (ctx: Context): Promise<void> => {
 
 const broadcastScheduleDailyHandler = async (ctx: Context): Promise<void> => {
   const sessionData = ctx.session?.data as any;
-  const { title, message, imageUrl } = sessionData ?? {};
+  const { title, message, media } = sessionData ?? {};
 
   if (!title || !message) {
     await ctx.answerCallbackQuery("Ошибка: данные рассылки не найдены");
@@ -111,18 +112,17 @@ const broadcastScheduleDailyHandler = async (ctx: Context): Promise<void> => {
     const broadcast = await createBroadcast({
       title,
       message,
-      imageUrl,
+      media,
       createdBy: ctx.chatDB.chatId,
       status: "scheduled",
       isRecurring: true,
       isScheduled: true,
+      cronExpression: COMMON_CRON_EXPRESSIONS.DAILY_9AM,
     });
 
-    await scheduleBroadcast(
-      broadcast.id,
-      COMMON_CRON_EXPRESSIONS.DAILY_9AM,
-      true,
-    );
+    const cronManager = getCronManager();
+
+    await cronManager?.scheduleJob(broadcast);
 
     const translations = await ctx.tm([
       LOCALIZATION_KEYS.BROADCAST_SCHEDULE_SUCCESS,
@@ -147,7 +147,7 @@ const broadcastScheduleDailyHandler = async (ctx: Context): Promise<void> => {
 
 const broadcastScheduleWeeklyHandler = async (ctx: Context): Promise<void> => {
   const sessionData = ctx.session?.data as any;
-  const { title, message, imageUrl } = sessionData ?? {};
+  const { title, message, media } = sessionData ?? {};
 
   if (!title || !message) {
     await ctx.answerCallbackQuery("Ошибка: данные рассылки не найдены");
@@ -159,18 +159,17 @@ const broadcastScheduleWeeklyHandler = async (ctx: Context): Promise<void> => {
     const broadcast = await createBroadcast({
       title,
       message,
-      imageUrl,
+      media,
       createdBy: ctx.chatDB.chatId,
       status: "scheduled",
       isRecurring: true,
       isScheduled: true,
+      cronExpression: COMMON_CRON_EXPRESSIONS.WEEKLY_MONDAY_9AM,
     });
 
-    await scheduleBroadcast(
-      broadcast.id,
-      COMMON_CRON_EXPRESSIONS.WEEKLY_MONDAY_9AM,
-      true,
-    );
+    const cronManager = getCronManager();
+
+    await cronManager?.scheduleJob(broadcast);
 
     const translations = await ctx.tm([
       LOCALIZATION_KEYS.BROADCAST_SCHEDULE_SUCCESS,
@@ -196,7 +195,7 @@ const broadcastScheduleWeeklyHandler = async (ctx: Context): Promise<void> => {
 
 const broadcastScheduleCustomHandler = async (ctx: Context): Promise<void> => {
   const sessionData = ctx.session?.data as any;
-  const { title, message, imageUrl, isRecurring = false } = sessionData ?? {};
+  const { title, message, media, isRecurring = false } = sessionData ?? {};
 
   if (!title || !message) {
     await ctx.answerCallbackQuery("Ошибка: данные рассылки не найдены");
@@ -244,7 +243,7 @@ const broadcastScheduleCustomHandler = async (ctx: Context): Promise<void> => {
   if (ctx.sessionSet) {
     await ctx.sessionSet({
       route: "broadcast_schedule_custom_interface",
-      data: { title, message, imageUrl, isRecurring },
+      data: { title, message, media, isRecurring },
     });
   }
 };
@@ -256,7 +255,7 @@ const broadcastScheduleCustomToggleHandler = async (
   const isRecurring = params.isRecurring === "true";
 
   const sessionData = ctx.session?.data as any;
-  const { title, message, imageUrl } = sessionData ?? {};
+  const { title, message, media } = sessionData ?? {};
 
   if (!title || !message) {
     await ctx.answerCallbackQuery("Ошибка: данные рассылки не найдены");
@@ -304,7 +303,7 @@ const broadcastScheduleCustomToggleHandler = async (
   if (ctx.sessionSet) {
     await ctx.sessionSet({
       route: "broadcast_schedule_custom_interface",
-      data: { title, message, imageUrl, isRecurring },
+      data: { title, message, media, isRecurring },
     });
   }
 };
@@ -313,7 +312,7 @@ const broadcastScheduleCustomConfirmHandler = async (
   ctx: Context,
 ): Promise<void> => {
   const sessionData = ctx.session?.data as any;
-  const { title, message, imageUrl, isRecurring = false } = sessionData ?? {};
+  const { title, message, media, isRecurring = false } = sessionData ?? {};
 
   if (!title || !message) {
     await ctx.answerCallbackQuery("Ошибка: данные рассылки не найдены");
@@ -335,7 +334,7 @@ const broadcastScheduleCustomConfirmHandler = async (
   if (ctx.sessionSet) {
     await ctx.sessionSet({
       route: "broadcast_schedule_custom_wait",
-      data: { title, message, imageUrl, isRecurring, step: "waiting_cron" },
+      data: { title, message, media, isRecurring, step: "waiting_cron" },
     });
   }
 };
@@ -357,7 +356,7 @@ export const broadcastCustomCronWait = async (ctx: Context) => {
   }
 
   const sessionData = ctx.session?.data as any;
-  const { title, message, imageUrl, isRecurring = false } = sessionData ?? {};
+  const { title, message, media, isRecurring = false } = sessionData ?? {};
 
   if (!title || !message) {
     await ctx.answerCallbackQuery("Ошибка: данные рассылки не найдены");
@@ -369,7 +368,7 @@ export const broadcastCustomCronWait = async (ctx: Context) => {
     const broadcast = await createBroadcast({
       title,
       message,
-      imageUrl,
+      media,
       createdBy: ctx.chatDB.chatId,
       cronExpression,
       isScheduled: true,
@@ -377,7 +376,9 @@ export const broadcastCustomCronWait = async (ctx: Context) => {
       status: "scheduled",
     });
 
-    await scheduleBroadcast(broadcast.id, cronExpression, isRecurring);
+    const cronManager = getCronManager();
+
+    await cronManager?.scheduleJob(broadcast);
 
     await ctx.sessionClear?.();
 

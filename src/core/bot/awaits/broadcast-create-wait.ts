@@ -76,6 +76,7 @@ export const broadcastCreateImageWait = async (ctx: Context) => {
   const sessionData = ctx.session?.data as any;
   const title = sessionData?.title;
   const message = sessionData?.message;
+  let sourceType = "text";
 
   if (!title || !message) {
     await ctx.reply("Сессия устарела, попробуйте ещё раз");
@@ -83,23 +84,91 @@ export const broadcastCreateImageWait = async (ctx: Context) => {
     return;
   }
 
-  let imageUrl: string | undefined;
+  const media: any[] = [];
 
-  // Проверяем, есть ли фото в сообщении
   if (ctx.message?.photo && ctx.message.photo.length > 0) {
-    // Берем самое большое фото
-    const photo = ctx.message.photo[ctx.message.photo.length - 1];
-    imageUrl = photo.file_id;
+    const photo = ctx.message.photo.at(-1);
+    sourceType = "photo";
+    media.push({
+      type: "photo",
+      url: photo?.file_id,
+      fileId: photo?.file_id,
+      fileSize: photo?.file_size,
+    });
+  } else if (ctx.message?.video) {
+    sourceType = "video";
+    media.push({
+      type: "video",
+      url: ctx.message.video.file_id,
+      fileId: ctx.message.video.file_id,
+      fileName: ctx.message.video.file_name,
+      mimeType: ctx.message.video.mime_type,
+      fileSize: ctx.message.video.file_size,
+    });
+  } else if (ctx.message?.document) {
+    sourceType = "document";
+    media.push({
+      type: "document",
+      url: ctx.message.document.file_id,
+      fileId: ctx.message.document.file_id,
+      fileName: ctx.message.document.file_name,
+      mimeType: ctx.message.document.mime_type,
+      fileSize: ctx.message.document.file_size,
+    });
+  } else if (ctx.message?.audio) {
+    sourceType = "audio";
+    media.push({
+      type: "audio",
+      url: ctx.message.audio.file_id,
+      fileId: ctx.message.audio.file_id,
+      fileName: ctx.message.audio.file_name,
+      mimeType: ctx.message.audio.mime_type,
+      fileSize: ctx.message.audio.file_size,
+    });
+  } else if (ctx.message?.voice) {
+    sourceType = "voice";
+    media.push({
+      type: "voice",
+      url: ctx.message.voice.file_id,
+      fileId: ctx.message.voice.file_id,
+      mimeType: ctx.message.voice.mime_type,
+      fileSize: ctx.message.voice.file_size,
+    });
+  } else if (ctx.message?.video_note) {
+    sourceType = "video_note";
+    media.push({
+      type: "video_note",
+      url: ctx.message.video_note.file_id,
+      fileId: ctx.message.video_note.file_id,
+      fileSize: ctx.message.video_note.file_size,
+    });
+  } else if (ctx.message?.animation) {
+    sourceType = "animation";
+    media.push({
+      type: "animation",
+      url: ctx.message.animation.file_id,
+      fileId: ctx.message.animation.file_id,
+      fileName: ctx.message.animation.file_name,
+      mimeType: ctx.message.animation.mime_type,
+      fileSize: ctx.message.animation.file_size,
+    });
   }
 
-  await showBroadcastPreview(ctx, title, message, imageUrl);
+  await showBroadcastPreview(
+    ctx,
+    title,
+    message,
+    sourceType,
+    media.length > 0 ? media : undefined,
+  );
 };
 
 const showBroadcastPreview = async (
   ctx: Context,
   title: string,
   message: string,
-  imageUrl?: string,
+  sourceType: string,
+  media?: any[],
 ) => {
   if (ctx.callbackQuery) {
     // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
@@ -134,28 +203,67 @@ const showBroadcastPreview = async (
 
   await ctx.sessionSet?.({
     route: "broadcast_confirm",
-    data: { title, message, imageUrl },
+    data: { title, message, media },
   });
 
   const previewText = `\n📝 *${title}*\n${translations[LOCALIZATION_KEYS.BROADCAST_CREATE_PREVIEW]}\n\n${message}`;
 
-  if (imageUrl) {
-    await ctx.editAndReply.replyWithPhoto(imageUrl, {
-      caption: previewText,
-      parse_mode: "Markdown",
-      reply_markup: keyboard,
-    });
-  } else {
-    await ctx.editAndReply.reply(previewText, {
-      parse_mode: "Markdown",
-      reply_markup: keyboard,
-    });
+  const firstMedia = media ? media[0] : null;
+
+  switch (sourceType) {
+    case "photo":
+      await ctx.editAndReply.replyWithPhoto(firstMedia.url, {
+        caption: previewText,
+        parse_mode: "Markdown",
+        reply_markup: keyboard,
+      });
+      break;
+    case "video":
+      await ctx.editAndReply.replyWithVideo(firstMedia.url, {
+        caption: previewText,
+        parse_mode: "Markdown",
+        reply_markup: keyboard,
+      });
+      break;
+    case "document":
+      await ctx.editAndReply.replyWithDocument(firstMedia.url, {
+        caption: previewText,
+        parse_mode: "Markdown",
+        reply_markup: keyboard,
+      });
+      break;
+    case "audio":
+      await ctx.editAndReply.replyWithAudio(firstMedia.url, {
+        caption: previewText,
+        parse_mode: "Markdown",
+        reply_markup: keyboard,
+      });
+      break;
+    case "voice":
+      await ctx.editAndReply.replyWithVoice(firstMedia.url, {
+        caption: previewText,
+        parse_mode: "Markdown",
+        reply_markup: keyboard,
+      });
+      break;
+    case "animation":
+      await ctx.editAndReply.replyWithAnimation(firstMedia.url, {
+        caption: previewText,
+        parse_mode: "Markdown",
+        reply_markup: keyboard,
+      });
+      break;
+    default:
+      await ctx.editAndReply.reply(previewText, {
+        parse_mode: "Markdown",
+        reply_markup: keyboard,
+      });
   }
 };
 
 export const broadcastConfirmCreate = async (ctx: Context) => {
   const sessionData = ctx.session?.data as any;
-  const { title, message, imageUrl } = sessionData ?? {};
+  const { title, message, media } = sessionData ?? {};
 
   if (!title || !message) {
     await ctx.answerCallbackQuery("Ошибка: данные рассылки не найдены");
@@ -167,7 +275,7 @@ export const broadcastConfirmCreate = async (ctx: Context) => {
     await createBroadcast({
       title,
       message,
-      imageUrl,
+      media,
       createdBy: ctx.chatDB.chatId,
     });
 
@@ -182,18 +290,10 @@ export const broadcastConfirmCreate = async (ctx: Context) => {
 
     const [titleMsg, keyboard] = await createBroadcastMenuKeyboard(ctx);
 
-    if (imageUrl) {
-      await ctx.editAndReply.replyWithPhoto(undefined, {
-        caption: titleMsg,
-        parse_mode: "Markdown",
-        reply_markup: keyboard,
-      });
-    } else {
-      await ctx.editAndReply.reply(titleMsg, {
-        parse_mode: "Markdown",
-        reply_markup: keyboard,
-      });
-    }
+    await ctx.editAndReply.reply(titleMsg, {
+      parse_mode: "Markdown",
+      reply_markup: keyboard,
+    });
   } catch {
     await ctx.answerCallbackQuery("Ошибка при создании рассылки");
     await ctx.sessionClear?.();
@@ -206,8 +306,12 @@ export const broadcastCancelCreate = async (ctx: Context) => {
 
   const [titleMsg, keyboard] = await createBroadcastMenuKeyboard(ctx);
 
-  await ctx.editMessageText(titleMsg, {
-    reply_markup: keyboard,
+  await ctx.editAndReply.universalReply({
+    type: "text",
+    content: titleMsg,
+    options: {
+      reply_markup: keyboard,
+    },
   });
 };
 
@@ -222,7 +326,7 @@ export const broadcastSkipImage = async (ctx: Context) => {
     return;
   }
 
-  await showBroadcastPreview(ctx, title, message);
+  await showBroadcastPreview(ctx, title, message, "text" /* no media */);
 };
 
 export default {

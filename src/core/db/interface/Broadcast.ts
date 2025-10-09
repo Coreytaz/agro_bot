@@ -1,8 +1,18 @@
+export interface IBroadcastMedia {
+  type: "photo" | "video" | "audio" | "document" | "voice" | "video_note" | "animation";
+  url: string;
+  caption?: string;
+  fileId?: string; // Telegram file_id для уже загруженных файлов
+  fileName?: string;
+  mimeType?: string;
+  fileSize?: number;
+}
+
 export interface IBroadcast {
   id: number;
   title: string;
   message: string;
-  imageUrl: string | null;
+  media: IBroadcastMedia[] | null;
   status: string;
   totalUsers: number | null;
   sentCount: number | null;
@@ -18,7 +28,7 @@ export interface IBroadcast {
 export interface ICreateBroadcast {
   title: string;
   message: string;
-  imageUrl?: string;
+  media?: IBroadcastMedia[];
   createdBy: string;
   status?: BroadcastStatus;
   cronExpression?: string;
@@ -29,7 +39,7 @@ export interface ICreateBroadcast {
 export interface IUpdateBroadcast {
   title?: string;
   message?: string;
-  imageUrl?: string;
+  media?: IBroadcastMedia[];
   status?: BroadcastStatus;
   totalUsers?: number;
   sentCount?: number;

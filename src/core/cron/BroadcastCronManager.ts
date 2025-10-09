@@ -1,8 +1,10 @@
 import { Context } from "@core/bot/core/interface/Context";
+import { drizzle } from "@core/db";
 import { IBroadcast } from "@core/db/interface";
-import { getAllChatTG, updateOneBroadcast } from "@core/db/models";
+import { chatSettings, chatTG, updateOneBroadcast } from "@core/db/models";
 import logger from "@core/utils/logger";
 import { CronJob } from "cron";
+import { eq, isNull, or } from "drizzle-orm";
 import { Bot } from "grammy";
 
 import {
@@ -20,23 +22,6 @@ interface ICronManagerConfig {
   enableLogging?: boolean;
 }
 
-export const getBroadcastStats = async (broadcastId: number) => {
-  const broadcast = await getBroadcastById(broadcastId);
-  if (!broadcast) {
-    return null;
-  }
-
-  return {
-    id: broadcast.id,
-    title: broadcast.title,
-    status: broadcast.status,
-    totalUsers: broadcast.totalUsers ?? 0,
-    sentCount: broadcast.sentCount ?? 0,
-    errorCount: broadcast.errorCount ?? 0,
-    createdAt: broadcast.created_at,
-  };
-};
-
 export const sendBroadcast = async (
   bot: Bot<Context>,
   broadcast: IBroadcast,
@@ -44,7 +29,24 @@ export const sendBroadcast = async (
   try {
     await updateOneBroadcast({ status: "sending" }, { id: broadcast.id });
 
-    const users = await getAllChatTG();
+    const users = await drizzle.transaction(async tx => {
+      const users = await tx
+        .select({
+          chatId: chatTG.chatId,
+          name: chatTG.name,
+        })
+        .from(chatTG)
+        .leftJoin(chatSettings, eq(chatSettings.chatTgId, chatTG.id))
+        .where(
+          or(
+            eq(chatSettings.notifications, 1),
+            isNull(chatSettings.notifications),
+          ),
+        )
+        .all();
+
+      return users;
+    });
 
     const totalUsers = users.length;
 
@@ -55,15 +57,53 @@ export const sendBroadcast = async (
 
     for (const user of users) {
       try {
-        if (broadcast.imageUrl) {
-          await bot.api.sendPhoto(user.chatId, broadcast.imageUrl, {
-            caption: broadcast.message,
-            parse_mode: "Markdown",
-          });
-        } else {
-          await bot.api.sendMessage(user.chatId, broadcast.message, {
-            parse_mode: "Markdown",
-          });
+        const mediaItem = broadcast.media?.[0];
+
+        switch (mediaItem?.type) {
+          case "photo":
+            await bot.api.sendPhoto(user.chatId, mediaItem.url, {
+              caption: mediaItem.caption ?? broadcast.message,
+              parse_mode: "Markdown",
+            });
+            break;
+          case "video":
+            await bot.api.sendVideo(user.chatId, mediaItem.url, {
+              caption: mediaItem.caption ?? broadcast.message,
+              parse_mode: "Markdown",
+            });
+            break;
+          case "audio":
+            await bot.api.sendAudio(user.chatId, mediaItem.url, {
+              caption: mediaItem.caption ?? broadcast.message,
+              parse_mode: "Markdown",
+            });
+            break;
+          case "document":
+            await bot.api.sendDocument(user.chatId, mediaItem.url, {
+              caption: mediaItem.caption ?? broadcast.message,
+              parse_mode: "Markdown",
+            });
+            break;
+          case "voice":
+            await bot.api.sendVoice(user.chatId, mediaItem.url, {
+              caption: mediaItem.caption ?? broadcast.message,
+              parse_mode: "Markdown",
+            });
+            break;
+          case "video_note":
+            await bot.api.sendVideoNote(user.chatId, mediaItem.url);
+            break;
+          case "animation":
+            await bot.api.sendAnimation(user.chatId, mediaItem.url, {
+              caption: mediaItem.caption ?? broadcast.message,
+              parse_mode: "Markdown",
+            });
+            break;
+          default:
+            await bot.api.sendMessage(user.chatId, broadcast.message, {
+              parse_mode: "Markdown",
+            });
+            break;
         }
 
         sentCount++;
@@ -231,9 +271,7 @@ export class BroadcastCronManager {
     }
   }
 
-  private async scheduleJob(
-    _broadcast: typeof broadcast.$inferSelect,
-  ): Promise<void> {
+  async scheduleJob(_broadcast: typeof broadcast.$inferSelect): Promise<void> {
     if (!_broadcast.cronExpression) {
       return;
     }
