@@ -1,3 +1,4 @@
+import { Context } from "@core/bot/core/interface/Context";
 import { IBroadcast } from "@core/db/interface";
 import { getAllChatTG, updateOneBroadcast } from "@core/db/models";
 import logger from "@core/utils/logger";
@@ -36,8 +37,8 @@ export const getBroadcastStats = async (broadcastId: number) => {
   };
 };
 
-const sendBroadcast = async (
-  bot: Bot,
+export const sendBroadcast = async (
+  bot: Bot<Context>,
   broadcast: IBroadcast,
 ): Promise<{ success: boolean; totalSent: number; errors: number }> => {
   try {
@@ -57,9 +58,12 @@ const sendBroadcast = async (
         if (broadcast.imageUrl) {
           await bot.api.sendPhoto(user.chatId, broadcast.imageUrl, {
             caption: broadcast.message,
+            parse_mode: "Markdown",
           });
         } else {
-          await bot.api.sendMessage(user.chatId, broadcast.message, {});
+          await bot.api.sendMessage(user.chatId, broadcast.message, {
+            parse_mode: "Markdown",
+          });
         }
 
         sentCount++;

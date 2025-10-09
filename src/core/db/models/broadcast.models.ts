@@ -8,28 +8,21 @@ import {
   IUpdateBroadcast,
 } from "../interface";
 import { DrizzleOptions } from "../types";
-import {
-  createOne,
-  findAndCountAll,
-  getAll,
-  getOne,
-  timestamps,
-  updateOne,
-} from "../utils";
+import { createOne, getAll, getOne, timestamps, updateOne } from "../utils";
 
 export const broadcast = sqliteTable("broadcast", {
   id: int().primaryKey({ autoIncrement: true }),
-  title: text().notNull(), // Заголовок рассылки
-  message: text().notNull(), // Текст сообщения
-  imageUrl: text(), // URL изображения (опционально)
+  title: text().notNull(),
+  message: text().notNull(),
+  imageUrl: text(),
   status: text().notNull().default("draft"),
-  totalUsers: int().default(0), // Общее количество пользователей для отправки
-  sentCount: int().default(0), // Количество успешно отправленных сообщений
-  errorCount: int().default(0), // Количество ошибок отправки
-  createdBy: text().notNull(), // ID админа, создавшего рассылку
-  cronExpression: text(), // Cron выражение для повторяющихся рассылок
-  isScheduled: int({ mode: "boolean" }).default(false), // Запланирована ли рассылка
-  isRecurring: int({ mode: "boolean" }).default(false), // Повторяющаяся ли рассылка
+  totalUsers: int().default(0),
+  sentCount: int().default(0),
+  errorCount: int().default(0),
+  createdBy: text().notNull(),
+  cronExpression: text(),
+  isScheduled: int({ mode: "boolean" }).default(false),
+  isRecurring: int({ mode: "boolean" }).default(false),
   ...timestamps,
 });
 
@@ -37,14 +30,6 @@ export const createOneBroadcast = async <T extends typeof broadcast>(
   args: Omit<T["$inferInsert"], "id" | "created_at" | "updated_at">,
 ) => {
   return createOne(broadcast)(args);
-};
-
-export const findAndCountAllBroadcast = async <T extends typeof broadcast>(
-  args: Partial<T["$inferSelect"]>,
-  options: { limit: number; offset: number },
-  ...where: (SQLWrapper | undefined)[]
-) => {
-  return findAndCountAll(broadcast)(args, options, ...where);
 };
 
 export const getOneBroadcast = async <T extends typeof broadcast>(
@@ -133,8 +118,4 @@ export const completeBroadcast = async (
     },
     { id },
   )) as IBroadcast | null;
-};
-
-export const getActiveBroadcasts = async (): Promise<IBroadcast[]> => {
-  return await getBroadcastsByStatus("sending");
 };

@@ -1,30 +1,24 @@
 import { getCronManager } from "@core/bot";
-import logger from "@core/utils/logger";
+import { bot } from "@core/bot/core";
+import { sendBroadcast } from "@core/cron";
 
 import type { IBroadcast, IUpdateBroadcast } from "../interface";
 import { getBroadcastById, updateBroadcast } from "../models/broadcast.models";
-import { getAllChatTG } from "../models/chatTG.models";
 
 export const COMMON_CRON_EXPRESSIONS = {
   DAILY_9AM: "0 9 * * *",
-  DAILY_6PM: "0 18 * * *",
   WEEKLY_MONDAY_9AM: "0 9 * * 1",
-  WEEKLY_FRIDAY_6PM: "0 18 * * 5",
 } as const;
 
 export const sendBroadcastNow = async (broadcastId: number): Promise<void> => {
   const broadcast = await getBroadcastById(broadcastId);
+
   if (!broadcast) {
     throw new Error(`Broadcast with id ${broadcastId} not found`);
   }
 
-  await updateBroadcast(broadcastId, {
-    status: "sending",
-  });
-
   try {
     await executeBroadcast(broadcast);
-    await updateBroadcast(broadcastId, { status: "sent" });
   } catch (error) {
     await updateBroadcast(broadcastId, { status: "error" });
     throw error;
@@ -54,28 +48,16 @@ export const executeBroadcast = async (
     throw new Error("Cron Manager not available");
   }
 
-  const bot = (cronManager as any).bot;
+  const result = await sendBroadcast(bot, broadcast);
 
-  if (!bot) {
-    throw new Error("Bot instance not available");
+  if (!result.success) {
+    throw new Error("Broadcast execution failed");
   }
 
-  const chats = await getAllChatTG({});
-
-  for (const chat of chats) {
-    try {
-      if (broadcast.imageUrl) {
-        await bot.api.sendPhoto(chat.chatId, broadcast.imageUrl, {
-          caption: broadcast.message,
-          parse_mode: "Markdown",
-        });
-      } else {
-        await bot.api.sendMessage(chat.chatId, broadcast.message, {
-          parse_mode: "Markdown",
-        });
-      }
-    } catch (error) {
-      logger.error(`Failed to send broadcast to chat ${chat.chatId}:`, error);
-    }
+  if (!broadcast.isRecurring) {
+    await updateBroadcast(broadcast.id, {
+      status: "sent",
+      isScheduled: false,
+    });
   }
 };

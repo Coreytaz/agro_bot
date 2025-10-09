@@ -113,6 +113,9 @@ const broadcastScheduleDailyHandler = async (ctx: Context): Promise<void> => {
       message,
       imageUrl,
       createdBy: ctx.chatDB.chatId,
+      status: "scheduled",
+      isRecurring: true,
+      isScheduled: true,
     });
 
     await scheduleBroadcast(
@@ -158,9 +161,11 @@ const broadcastScheduleWeeklyHandler = async (ctx: Context): Promise<void> => {
       message,
       imageUrl,
       createdBy: ctx.chatDB.chatId,
+      status: "scheduled",
+      isRecurring: true,
+      isScheduled: true,
     });
 
-    // Планируем еженедельную отправку по понедельникам в 9:00
     await scheduleBroadcast(
       broadcast.id,
       COMMON_CRON_EXPRESSIONS.WEEKLY_MONDAY_9AM,
@@ -170,6 +175,7 @@ const broadcastScheduleWeeklyHandler = async (ctx: Context): Promise<void> => {
     const translations = await ctx.tm([
       LOCALIZATION_KEYS.BROADCAST_SCHEDULE_SUCCESS,
     ]);
+
     await ctx.sessionClear?.();
     await ctx.answerCallbackQuery(
       translations[LOCALIZATION_KEYS.BROADCAST_SCHEDULE_SUCCESS],
@@ -190,7 +196,124 @@ const broadcastScheduleWeeklyHandler = async (ctx: Context): Promise<void> => {
 
 const broadcastScheduleCustomHandler = async (ctx: Context): Promise<void> => {
   const sessionData = ctx.session?.data as any;
+  const { title, message, imageUrl, isRecurring = false } = sessionData ?? {};
+
+  if (!title || !message) {
+    await ctx.answerCallbackQuery("Ошибка: данные рассылки не найдены");
+    await ctx.sessionClear?.();
+    return;
+  }
+
+  const translations = await ctx.tm([
+    LOCALIZATION_KEYS.BROADCAST_RECURRING_ON,
+    LOCALIZATION_KEYS.BROADCAST_RECURRING_OFF,
+    LOCALIZATION_KEYS.BROADCAST_RECURRING_ENABLED,
+    LOCALIZATION_KEYS.BROADCAST_RECURRING_DISABLED,
+    LOCALIZATION_KEYS.COMMON_CONFIRM,
+    LOCALIZATION_KEYS.COMMON_CANCEL,
+  ]);
+
+  const recurringText = isRecurring
+    ? translations[LOCALIZATION_KEYS.BROADCAST_RECURRING_OFF]
+    : translations[LOCALIZATION_KEYS.BROADCAST_RECURRING_ON];
+
+  const statusText = isRecurring
+    ? translations[LOCALIZATION_KEYS.BROADCAST_RECURRING_ENABLED]
+    : translations[LOCALIZATION_KEYS.BROADCAST_RECURRING_DISABLED];
+
+  const keyboard = new InlineKeyboard()
+    .text(
+      recurringText,
+      `broadcast_schedule_custom_toggle{isRecurring:${!isRecurring}}`,
+    )
+    .row()
+    .text(
+      translations[LOCALIZATION_KEYS.COMMON_CONFIRM],
+      "broadcast_schedule_custom_confirm",
+    )
+    .row()
+    .text(
+      translations[LOCALIZATION_KEYS.COMMON_CANCEL],
+      "broadcast_cancel_create",
+    );
+
+  await ctx.editMessageText(statusText, {
+    reply_markup: keyboard,
+  });
+
+  if (ctx.sessionSet) {
+    await ctx.sessionSet({
+      route: "broadcast_schedule_custom_interface",
+      data: { title, message, imageUrl, isRecurring },
+    });
+  }
+};
+
+const broadcastScheduleCustomToggleHandler = async (
+  ctx: Context,
+): Promise<void> => {
+  const params = ctx.paramsExtractor?.params as { isRecurring?: string };
+  const isRecurring = params.isRecurring === "true";
+
+  const sessionData = ctx.session?.data as any;
   const { title, message, imageUrl } = sessionData ?? {};
+
+  if (!title || !message) {
+    await ctx.answerCallbackQuery("Ошибка: данные рассылки не найдены");
+    await ctx.sessionClear?.();
+    return;
+  }
+
+  const translations = await ctx.tm([
+    LOCALIZATION_KEYS.BROADCAST_RECURRING_ON,
+    LOCALIZATION_KEYS.BROADCAST_RECURRING_OFF,
+    LOCALIZATION_KEYS.BROADCAST_RECURRING_ENABLED,
+    LOCALIZATION_KEYS.BROADCAST_RECURRING_DISABLED,
+    LOCALIZATION_KEYS.COMMON_CONFIRM,
+    LOCALIZATION_KEYS.COMMON_CANCEL,
+  ]);
+
+  const recurringText = isRecurring
+    ? translations[LOCALIZATION_KEYS.BROADCAST_RECURRING_OFF]
+    : translations[LOCALIZATION_KEYS.BROADCAST_RECURRING_ON];
+
+  const statusText = isRecurring
+    ? translations[LOCALIZATION_KEYS.BROADCAST_RECURRING_ENABLED]
+    : translations[LOCALIZATION_KEYS.BROADCAST_RECURRING_DISABLED];
+
+  const keyboard = new InlineKeyboard()
+    .text(
+      recurringText,
+      `broadcast_schedule_custom_toggle{isRecurring:${!isRecurring}}`,
+    )
+    .row()
+    .text(
+      translations[LOCALIZATION_KEYS.COMMON_CONFIRM],
+      "broadcast_schedule_custom_confirm",
+    )
+    .row()
+    .text(
+      translations[LOCALIZATION_KEYS.COMMON_CANCEL],
+      "broadcast_cancel_create",
+    );
+
+  await ctx.editMessageText(statusText, {
+    reply_markup: keyboard,
+  });
+
+  if (ctx.sessionSet) {
+    await ctx.sessionSet({
+      route: "broadcast_schedule_custom_interface",
+      data: { title, message, imageUrl, isRecurring },
+    });
+  }
+};
+
+const broadcastScheduleCustomConfirmHandler = async (
+  ctx: Context,
+): Promise<void> => {
+  const sessionData = ctx.session?.data as any;
+  const { title, message, imageUrl, isRecurring = false } = sessionData ?? {};
 
   if (!title || !message) {
     await ctx.answerCallbackQuery("Ошибка: данные рассылки не найдены");
@@ -212,7 +335,7 @@ const broadcastScheduleCustomHandler = async (ctx: Context): Promise<void> => {
   if (ctx.sessionSet) {
     await ctx.sessionSet({
       route: "broadcast_schedule_custom_wait",
-      data: { title, message, imageUrl, step: "waiting_cron" },
+      data: { title, message, imageUrl, isRecurring, step: "waiting_cron" },
     });
   }
 };
@@ -229,13 +352,12 @@ export const broadcastCustomCronWait = async (ctx: Context) => {
       "❌ Неверное cron выражение!\n\n" +
         "Формат: минута час день месяц день_недели\n" +
         "Пример: `0 9 * * *` (каждый день в 9:00)",
-      { parse_mode: "Markdown" },
     );
     return;
   }
 
   const sessionData = ctx.session?.data as any;
-  const { title, message, imageUrl } = sessionData ?? {};
+  const { title, message, imageUrl, isRecurring = false } = sessionData ?? {};
 
   if (!title || !message) {
     await ctx.answerCallbackQuery("Ошибка: данные рассылки не найдены");
@@ -250,9 +372,12 @@ export const broadcastCustomCronWait = async (ctx: Context) => {
       imageUrl,
       createdBy: ctx.chatDB.chatId,
       cronExpression,
+      isScheduled: true,
+      isRecurring,
+      status: "scheduled",
     });
 
-    await scheduleBroadcast(broadcast.id, cronExpression, true);
+    await scheduleBroadcast(broadcast.id, cronExpression, isRecurring);
 
     await ctx.sessionClear?.();
 
@@ -272,4 +397,6 @@ export default {
   broadcast_schedule_daily: broadcastScheduleDailyHandler,
   broadcast_schedule_weekly: broadcastScheduleWeeklyHandler,
   broadcast_schedule_custom: broadcastScheduleCustomHandler,
+  broadcast_schedule_custom_toggle: broadcastScheduleCustomToggleHandler,
+  broadcast_schedule_custom_confirm: broadcastScheduleCustomConfirmHandler,
 };

@@ -20,6 +20,7 @@ export interface ICreateBroadcast {
   message: string;
   imageUrl?: string;
   createdBy: string;
+  status?: BroadcastStatus;
   cronExpression?: string;
   isScheduled?: boolean;
   isRecurring?: boolean;

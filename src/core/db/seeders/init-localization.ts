@@ -1116,6 +1116,54 @@ const initialLocalizationData: LocalizationData[] = [
     value: "✅ Broadcast scheduled!",
     description: "Broadcast scheduled success message",
   },
+  {
+    key: "broadcast.recurring.on",
+    locale: "ru",
+    value: "🔄 Включить повторение",
+    description: "Кнопка включения повторяющейся рассылки",
+  },
+  {
+    key: "broadcast.recurring.on",
+    locale: "en",
+    value: "🔄 Enable Recurring",
+    description: "Enable recurring broadcast button",
+  },
+  {
+    key: "broadcast.recurring.off",
+    locale: "ru",
+    value: "⏹️ Отключить повторение",
+    description: "Кнопка отключения повторяющейся рассылки",
+  },
+  {
+    key: "broadcast.recurring.off",
+    locale: "en",
+    value: "⏹️ Disable Recurring",
+    description: "Disable recurring broadcast button",
+  },
+  {
+    key: "broadcast.recurring.enabled",
+    locale: "ru",
+    value: "🔄 Повторение включено",
+    description: "Статус включенного повторения",
+  },
+  {
+    key: "broadcast.recurring.enabled",
+    locale: "en",
+    value: "🔄 Recurring enabled",
+    description: "Recurring enabled status",
+  },
+  {
+    key: "broadcast.recurring.disabled",
+    locale: "ru",
+    value: "⏹️ Повторение отключено",
+    description: "Статус отключенного повторения",
+  },
+  {
+    key: "broadcast.recurring.disabled",
+    locale: "en",
+    value: "⏹️ Recurring disabled",
+    description: "Recurring disabled status",
+  },
 
   // Рассылка - Статусы
   {
