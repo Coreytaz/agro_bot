@@ -1,6 +1,7 @@
 import { LOCALIZATION_KEYS } from "@config/localization.config";
 import { InlineKeyboard } from "grammy";
 
+import { BROADCAST_LIST_KEY } from "../callbackQuery/broadcast";
 import { Context } from "../core/interface/Context";
 
 export const createBroadcastMenuKeyboard = async (
@@ -16,9 +17,15 @@ export const createBroadcastMenuKeyboard = async (
   return [
     translations[LOCALIZATION_KEYS.BROADCAST_MENU_TITLE],
     new InlineKeyboard()
-      .text(translations[LOCALIZATION_KEYS.BROADCAST_MENU_CREATE], "broadcast_create")
+      .text(
+        translations[LOCALIZATION_KEYS.BROADCAST_MENU_CREATE],
+        "broadcast_create",
+      )
       .row()
-      .text(translations[LOCALIZATION_KEYS.BROADCAST_MENU_LIST], "broadcast_list")
+      .text(
+        translations[LOCALIZATION_KEYS.BROADCAST_MENU_LIST],
+        BROADCAST_LIST_KEY,
+      )
       .row()
       .text(translations[LOCALIZATION_KEYS.COMMON_BACK], "admin_back"),
   ];

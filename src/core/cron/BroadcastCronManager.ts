@@ -1,6 +1,5 @@
 import { Context } from "@core/bot/core/interface/Context";
 import { drizzle } from "@core/db";
-import { IBroadcast } from "@core/db/interface";
 import { chatSettings, chatTG, updateOneBroadcast } from "@core/db/models";
 import logger from "@core/utils/logger";
 import { CronJob } from "cron";
@@ -8,7 +7,7 @@ import { eq, isNull, or } from "drizzle-orm";
 import { Bot } from "grammy";
 
 import {
-  broadcast,
+  broadcast as _broadcast,
   completeBroadcast,
   getAllBroadcasts,
   getBroadcastById,
@@ -24,7 +23,7 @@ interface ICronManagerConfig {
 
 export const sendBroadcast = async (
   bot: Bot<Context>,
-  broadcast: IBroadcast,
+  broadcast: typeof _broadcast.$inferSelect,
 ): Promise<{ success: boolean; totalSent: number; errors: number }> => {
   try {
     await updateOneBroadcast({ status: "sending" }, { id: broadcast.id });
@@ -271,35 +270,38 @@ export class BroadcastCronManager {
     }
   }
 
-  async scheduleJob(_broadcast: typeof broadcast.$inferSelect): Promise<void> {
-    if (!_broadcast.cronExpression) {
+  async scheduleJob(broadcast: typeof _broadcast.$inferSelect): Promise<void> {
+    if (!broadcast.cronExpression) {
       return;
     }
 
     try {
+      const existingJob = this.jobs.get(broadcast.id);
+
+      if (existingJob?.isActive) {
+        await existingJob.stop();
+        if (this.config.enableLogging) {
+          logger.info(`Stopped cron job for broadcast ${broadcast.id}`);
+        }
+        return;
+      }
+
       const job = new CronJob(
-        _broadcast.cronExpression,
-        () => this.executeBroadcast(_broadcast.id),
+        broadcast.cronExpression,
+        () => this.executeBroadcast(broadcast.id),
         null,
         false,
         this.config.timezone,
       );
 
-      const existingJob = this.jobs.get(_broadcast.id);
-
-      if (existingJob) {
-        await existingJob.stop();
-      }
-
-      this.jobs.set(_broadcast.id, job);
+      this.jobs.set(broadcast.id, job);
       job.start();
-
       if (this.config.enableLogging) {
-        logger.info(`Created cron job for broadcast ${_broadcast.id}`);
+        logger.info(`Created cron job for broadcast ${broadcast.id}`);
       }
     } catch (error) {
       logger.error(
-        `Error creating cron job for broadcast ${_broadcast.id}:`,
+        `Error creating cron job for broadcast ${broadcast.id}:`,
         error,
       );
     }
@@ -314,11 +316,6 @@ export class BroadcastCronManager {
       const broadcast = await updateBroadcast(broadcastId, {
         status: "sending",
       });
-
-      if (!broadcast) {
-        logger.error(`Broadcast ${broadcastId} not found during execution`);
-        return;
-      }
 
       const result = await sendBroadcast(this.bot, broadcast);
 

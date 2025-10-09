@@ -8,7 +8,15 @@ import {
   IUpdateBroadcast,
 } from "../interface";
 import { DrizzleOptions } from "../types";
-import { createOne, getAll, getOne, timestamps, updateOne } from "../utils";
+import {
+  createOne,
+  deleteOne,
+  findAndCountAll,
+  getAll,
+  getOne,
+  timestamps,
+  updateOne,
+} from "../utils";
 
 export const broadcast = sqliteTable("broadcast", {
   id: int().primaryKey({ autoIncrement: true }),
@@ -25,6 +33,14 @@ export const broadcast = sqliteTable("broadcast", {
   isRecurring: int({ mode: "boolean" }).default(false),
   ...timestamps,
 });
+
+export const findAndCountAllBroadcast = async <T extends typeof broadcast>(
+  args: Partial<T["$inferSelect"]>,
+  options: { limit: number; offset: number },
+  ...where: (SQLWrapper | undefined)[]
+) => {
+  return findAndCountAll(broadcast)(args, options, ...where);
+};
 
 export const createOneBroadcast = async <T extends typeof broadcast>(
   args: Omit<T["$inferInsert"], "id" | "created_at" | "updated_at">,
@@ -77,11 +93,8 @@ export const getBroadcastsByStatus = async (
   return (await getAllBroadcast({ status })) as IBroadcast[];
 };
 
-export const updateBroadcast = async (
-  id: number,
-  data: IUpdateBroadcast,
-): Promise<IBroadcast | null> => {
-  return (await updateOneBroadcast(data, { id })) as IBroadcast | null;
+export const updateBroadcast = async (id: number, data: IUpdateBroadcast) => {
+  return await updateOneBroadcast(data, { id });
 };
 
 export const updateBroadcastStatus = async (
@@ -107,6 +120,11 @@ export const updateBroadcastProgress = async (
   }
 
   return (await updateOneBroadcast(updateData, { id })) as IBroadcast | null;
+};
+
+export const deleteBroadcast = async (id: number): Promise<void> => {
+  const deleteBroadcastOne = deleteOne(broadcast);
+  await deleteBroadcastOne({ id });
 };
 
 export const completeBroadcast = async (
