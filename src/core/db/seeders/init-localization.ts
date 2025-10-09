@@ -852,25 +852,25 @@ const initialLocalizationData: LocalizationData[] = [
   {
     key: "broadcast.create.enter.title",
     locale: "ru",
-    value: "📝 Введите заголовок рассылки:",
+    value: "📝 Введите заголовок рассылки",
     description: "Запрос ввода заголовка рассылки",
   },
   {
     key: "broadcast.create.enter.title",
     locale: "en",
-    value: "📝 Enter broadcast title:",
+    value: "📝 Enter broadcast title",
     description: "Request broadcast title input",
   },
   {
     key: "broadcast.create.enter.message",
     locale: "ru",
-    value: "💬 Введите текст сообщения:",
+    value: "💬 Введите текст сообщения",
     description: "Запрос ввода текста рассылки",
   },
   {
     key: "broadcast.create.enter.message",
     locale: "en",
-    value: "💬 Enter message text:",
+    value: "💬 Enter message text",
     description: "Request broadcast message input",
   },
   {
