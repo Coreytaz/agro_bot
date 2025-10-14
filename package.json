@@ -13,7 +13,7 @@
   "scripts": {
     "build": "node --run validate-typescript && node --run generate-dist",
     "server:prod": "dotenv -e .env -- node dist/server.js",
-    "server:dev": "nodemon",
+    "server:dev": "nodemon --watch",
     "lint": "eslint . --ext .js,.mjs,cjs,.ts,.mts",
     "lint:fix": "eslint . --ext .js,.mjs,cjs,.ts,.mts --fix",
     "lint:file": "eslint",
@@ -28,6 +28,7 @@
   },
   "dependencies": {
     "@grammyjs/commands": "^1.2.0",
+    "@grammyjs/files": "^1.2.0",
     "@grammyjs/parse-mode": "^2.2.0",
     "@grammyjs/runner": "^2.0.3",
     "@libsql/client": "^0.15.15",
@@ -48,9 +49,9 @@
     "@types/cors": "^2.8.19",
     "@types/express": "^5.0.3",
     "@types/morgan": "^1.9.10",
-    "@types/node": "^24.7.0",
-    "@typescript-eslint/eslint-plugin": "^8.46.0",
-    "@typescript-eslint/parser": "^8.46.0",
+    "@types/node": "^24.7.2",
+    "@typescript-eslint/eslint-plugin": "^8.46.1",
+    "@typescript-eslint/parser": "^8.46.1",
     "drizzle-kit": "^0.31.5",
     "eslint": "^9.37.0",
     "eslint-config-prettier": "^10.1.8",
@@ -66,7 +67,7 @@
     "unplugin-swc": "^1.5.7"
   },
   "optionalDependencies": {
-    "@rollup/rollup-linux-x64-gnu": "^4.52.3",
+    "@rollup/rollup-linux-x64-gnu": "^4.52.4",
     "@swc/core-linux-arm64-musl": "^1.13.20",
     "@swc/core-linux-x64-gnu": "^1.13.20",
     "@swc/core-linux-x64-musl": "^1.13.20"

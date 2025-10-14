@@ -5,14 +5,12 @@ import type { Context } from "../core/interface/Context";
 import adminContentEditWait from "./admin-content-edit-wait";
 import broadcastCreateWait from "./broadcast-create-wait";
 import broadcastEditWait from "./broadcast-edit-wait";
-import cardRenameWait from "./cardRenameWait";
-import stickerWait from "./sticker.wait";
+import photoUploadWait from "./photo-upload-wait";
 
 type AwaitHandler = (ctx: Context, next: NextFunction) => Promise<void>;
 
 const awaits: Record<string, AwaitHandler> = {
-  "card.rename.wait": cardRenameWait,
-  "sticker.wait": stickerWait,
+  "photo.upload.wait": photoUploadWait,
   broadcast_schedule_custom_wait: broadcastCustomCronWait,
   ...adminContentEditWait,
   ...broadcastCreateWait,

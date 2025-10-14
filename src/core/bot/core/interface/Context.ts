@@ -7,43 +7,46 @@ import type {
   typeTG,
 } from "@core/db/models";
 import type { CommandsFlavor } from "@grammyjs/commands";
+import { FileFlavor } from "@grammyjs/files";
 import type { Context as BaseContext } from "grammy";
 
 import type { ParamsExtractorDB } from "../utils";
 import type { ContextWithEditAndReply } from "./ContextWithEditAndReply";
 import { Localization } from "./LocalizationContext";
 
-export type Context = BaseContext &
-  CommandsFlavor &
-  ContextWithEditAndReply &
-  Localization & {
-    chatDB: typeof chatTG.$inferSelect;
-    role: typeof role.$inferSelect;
-    configUser: typeof permissions.$inferSelect;
-    rules: Record<string, typeof rules.$inferSelect>;
-    chatType: typeof typeTG.$inferSelect;
+export type Context = FileFlavor<
+  BaseContext &
+    CommandsFlavor &
+    ContextWithEditAndReply &
+    Localization & {
+      chatDB: typeof chatTG.$inferSelect;
+      role: typeof role.$inferSelect;
+      configUser: typeof permissions.$inferSelect;
+      rules: Record<string, typeof rules.$inferSelect>;
+      chatType: typeof typeTG.$inferSelect;
 
-    paramsExtractor?: ParamsExtractorDB;
+      paramsExtractor?: ParamsExtractorDB;
 
-    usernameBot?: string;
-    referralLink?: string;
+      usernameBot?: string;
+      referralLink?: string;
 
-    isMsg?: boolean;
-    isCmd?: boolean;
-    isCallback?: boolean;
-    isKeyboard?: boolean;
+      isMsg?: boolean;
+      isCmd?: boolean;
+      isCallback?: boolean;
+      isKeyboard?: boolean;
 
-    // Session (awaiting input) support
-    session?:
-      | (Omit<typeof sessionTG.$inferSelect, "data"> & {
-          data: Record<string, unknown> | null;
-        })
-      | null;
-    sessionSet?: (args: {
-      route: string;
-      data?: Record<string, unknown>;
-      ttlSec?: number;
-      active?: boolean;
-    }) => Promise<void>;
-    sessionClear?: () => Promise<void>;
-  };
+      // Session (awaiting input) support
+      session?:
+        | (Omit<typeof sessionTG.$inferSelect, "data"> & {
+            data: Record<string, unknown> | null;
+          })
+        | null;
+      sessionSet?: (args: {
+        route: string;
+        data?: Record<string, unknown>;
+        ttlSec?: number;
+        active?: boolean;
+      }) => Promise<void>;
+      sessionClear?: () => Promise<void>;
+    }
+>;

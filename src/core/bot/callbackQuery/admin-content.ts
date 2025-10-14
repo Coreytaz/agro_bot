@@ -194,7 +194,6 @@ async function adminContentEditStart(ctx: Context) {
   await ctx.sessionSet?.({
     route: ADMIN_CONTENT_EDIT_WAIT_KEY,
     data: { id, locale, key },
-    ttlSec: 5 * 60,
   });
 
   await ctx.answerCallbackQuery();

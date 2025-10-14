@@ -41,7 +41,10 @@ export const menuCommand = new Command<Context>(
   async ctx => {
     const [menuMessage, keyboard] = await createMainMenuKeyboard(ctx);
 
-    await ctx.editAndReply.reply(menuMessage, { reply_markup: keyboard });
+    await ctx.editAndReply.reply(menuMessage, {
+      reply_markup: keyboard,
+      parse_mode: "Markdown",
+    });
   },
 );
 

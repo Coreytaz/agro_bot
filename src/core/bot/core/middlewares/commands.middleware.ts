@@ -11,6 +11,8 @@ const returnCommandHelper = async (
   ctx: Context,
   next: NextFunction,
 ) => {
+  console.log(command);
+
   const commandFunc = cmds[command] ?? null;
   if (!commandFunc)
     throw new LoggerBot("Данной команды нету!", {

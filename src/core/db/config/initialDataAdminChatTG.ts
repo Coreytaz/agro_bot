@@ -4,6 +4,7 @@ import { initialDataTypeTG } from "./initialDataTypeTG";
 
 export const chatIdDataChatTG = {
   gamy1337: "1221893505",
+  na_weka: "411789166",
 };
 
 export const chatIdDataChatTGArray = Object.values(chatIdDataChatTG);
@@ -19,6 +20,13 @@ export const initialDataAdminChatTG: Record<
     name: "gamy1337",
     typeId: initialDataTypeTG.private.id,
   },
+  na_weka: {
+    id: 2,
+    chatId: chatIdDataChatTG.na_weka,
+    roleId: initialDataRoles.admin.id,
+    name: "na_weka",
+    typeId: initialDataTypeTG.private.id,
+  },
 };
 
 export const initialDataAdminsChatTG: Record<
@@ -31,6 +39,12 @@ export const initialDataAdminsChatTG: Record<
     chatId: initialDataAdminChatTG.gamy1337.id,
     name: "gamy1337",
     adminChatId: chatIdDataChatTG.gamy1337,
+    isActive: 1,
+  },
+  na_weka: {
+    chatId: initialDataAdminChatTG.na_weka.id,
+    name: "na_weka",
+    adminChatId: chatIdDataChatTG.na_weka,
     isActive: 1,
   },
 };

@@ -8,6 +8,7 @@ import broadcastCommand from "./broadcast";
 import cancelCommand from "./cancel";
 import helpCommand from "./help";
 import menuCommand from "./menu";
+import photoTestCommand from "./photo-test";
 import settingsCommand from "./settings";
 import startCommand from "./start";
 
@@ -20,6 +21,7 @@ const commands: Record<string, Command<Context>> = {
   "/cancel": cancelCommand,
   "/admin": adminCommand,
   "/broadcast": broadcastCommand,
+  "/photo_test": photoTestCommand,
   ...blocking,
 } as const;
 

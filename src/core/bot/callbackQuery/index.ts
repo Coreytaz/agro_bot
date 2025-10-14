@@ -11,6 +11,8 @@ import help from "./help";
 import language from "./language";
 import menu from "./menu";
 import notification from "./notification";
+import photoProcess from "./photo-process";
+import photoUpload from "./photo-upload";
 import processStart from "./process.start";
 import settings from "./settings";
 
@@ -23,6 +25,8 @@ const callbackHandlers: Record<
   help: help,
   menu: menu,
   settings: settings,
+  "photo.upload": photoUpload,
+  "photo.process": photoProcess,
   ...language,
   ...adminBack,
   ...adminContent,

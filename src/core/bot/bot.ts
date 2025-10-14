@@ -1,5 +1,6 @@
 import logger from "@core/utils/logger";
 import { commands } from "@grammyjs/commands";
+import { hydrateFiles } from "@grammyjs/files";
 import { run, type RunnerHandle } from "@grammyjs/runner";
 import { ignoreOld, sequentialize } from "grammy-middlewares";
 
@@ -40,10 +41,12 @@ async function runBot() {
     .use(session)
     .use(router);
 
+  bot.api.config.use(hydrateFiles(bot.token));
+
   await bot.init();
 
   await setMyCommands(bot, {
-    allow: ["/start", "/menu", "/settings", "/about", "/cancel", "/help"],
+    allow: ["/start", "/menu", "/settings", "/about", "/cancel", "/help", "/photo_test"],
   });
 
   await initializeCronManager();
